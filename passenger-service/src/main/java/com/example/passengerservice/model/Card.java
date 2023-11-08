@@ -1,38 +1,37 @@
 package com.example.passengerservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@Table(name = "cards")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode(of = "id")
+@Getter @Setter
+@EqualsAndHashCode(of = "externalId")
+@Accessors(fluent = true)
 @Builder
 public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private UUID externalId;
 
     private String number;
 
-    private boolean isVerified;
-
-    private boolean isDeleted;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    private Passenger passenger;
+    @ManyToMany(mappedBy = "cards", fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Passenger> passengers = new HashSet<>();
 }

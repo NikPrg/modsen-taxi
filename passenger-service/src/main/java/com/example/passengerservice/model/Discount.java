@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Discount {
     private Integer discountValueInPercents;
-    private LocalDateTime createdAt;
-    private LocalDateTime expiredAt;
-    private boolean isUsed;
+    private LocalDateTime discountCreatedAt;
+    private LocalDateTime discountExpiredAt;
+    private boolean discountIsUsed;
 }
