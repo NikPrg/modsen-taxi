@@ -21,14 +21,30 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    mapstructVersion = "1.5.5.Final"
+    lombokVersion = "1.18.30"
+    lombokMapstructBindingVersion = "0.2.0"
+    jetbrainsAnnotationsVersion = "20.1.0"
+    jakartaValidationVersion = "3.0.2"
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.liquibase:liquibase-core'
-    compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'org.postgresql:postgresql'
+    implementation "org.jetbrains:annotations:${jetbrainsAnnotationsVersion}"
+    implementation "jakarta.validation:jakarta.validation-api:${jakartaValidationVersion}"
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation "org.projectlombok:lombok:${lombokVersion}"
+
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
+
+    runtimeOnly 'org.postgresql:postgresql'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

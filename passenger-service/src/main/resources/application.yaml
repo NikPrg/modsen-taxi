@@ -13,4 +13,13 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        generate_statistics: false
+        format_sql: false
+        show_sql: false
+
 
