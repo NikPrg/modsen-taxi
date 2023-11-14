@@ -25,15 +25,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handeValidationException(EntityNotFoundException ex) {
-        val errorId = UUID.randomUUID().toString();
+        val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 
-        if (log.isErrorEnabled()) {
-            log.error("Handled entity not found error: msg='{}', errorId='{}", message, errorId);
+        if (log.isInfoEnabled()) {
+            log.error("Handled entity not found exceptionId: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()
-                .id(errorId)
+                .id(exceptionId)
                 .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -42,15 +42,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityAlreadyExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeValidationException(EntityAlreadyExistException ex) {
-        val errorId = UUID.randomUUID().toString();
+        val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 
-        if (log.isErrorEnabled()) {
-            log.error("Handled entity already exist error: msg='{}', errorId='{}", message, errorId);
+        if (log.isInfoEnabled()) {
+            log.error("Handled entity already exist exception: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()
-                .id(errorId)
+                .id(exceptionId)
                 .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -59,18 +59,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        val errorId = UUID.randomUUID().toString();
+        val exceptionId = UUID.randomUUID().toString();
         val message = ex.getBindingResult().getFieldErrors()
                 .stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(" | "));
 
-        if (log.isErrorEnabled()) {
-            log.error("Handled method argument not valid error: msg='{}', errorId='{}", message, errorId);
+        if (log.isInfoEnabled()) {
+            log.error("Handled method argument not valid exceptionId: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()
-                .id(errorId)
+                .id(exceptionId)
                 .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -79,15 +79,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex) {
-        val errorId = UUID.randomUUID().toString();
+        val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 
-        if (log.isErrorEnabled()) {
-            log.error("Handled illegal argument error: msg='{}', errorId='{}", message, errorId);
+        if (log.isInfoEnabled()) {
+            log.error("Handled illegal argument error: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()
-                .id(errorId)
+                .id(exceptionId)
                 .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();

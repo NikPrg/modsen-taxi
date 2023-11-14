@@ -26,6 +26,8 @@ public class Card {
 
     private String number;
 
+    private boolean usedAsDefault;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

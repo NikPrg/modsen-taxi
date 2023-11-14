@@ -25,3 +25,7 @@ spring:
 
   messages:
     basename: messages-constants
+
+logging:
+  level:
+    web: INFO

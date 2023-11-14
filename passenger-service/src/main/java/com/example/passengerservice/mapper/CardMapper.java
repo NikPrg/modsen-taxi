@@ -16,5 +16,6 @@ public interface CardMapper {
     CardDto toDto(Card card);
 
     @Mapping(target = "externalId", expression = "java(java.util.UUID.randomUUID())")
+    @Mapping(target = "usedAsDefault", constant = "false")
     Card toCard(CardRegistrationDto cardDto);
 }

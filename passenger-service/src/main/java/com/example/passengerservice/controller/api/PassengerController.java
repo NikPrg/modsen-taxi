@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-import static com.example.passengerservice.util.HttpConstants.*;
+import static com.example.passengerservice.util.ApiRoutesConstants.*;
 
 
 @RestController

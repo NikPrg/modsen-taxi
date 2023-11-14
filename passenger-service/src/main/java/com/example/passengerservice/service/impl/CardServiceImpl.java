@@ -70,8 +70,10 @@ public class CardServiceImpl implements CardService {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
 
-        if (passenger.getDefaultPaymentMethod().getCardNumber().equals(card.getNumber()))
+        if (passenger.getDefaultPaymentMethod().getCardNumber().equals(card.getNumber())) {
             passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
+            
+        }
 
         passenger.removeCard(card);
     }

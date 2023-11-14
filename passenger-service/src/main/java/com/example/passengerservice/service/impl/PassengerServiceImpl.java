@@ -70,7 +70,8 @@ public class PassengerServiceImpl implements PassengerService {
         cardRepo.findByExternalId(cardExternalId)
                 .map(card -> {
                     if (card.getPassengers().contains(passenger)) {
-                        passenger.setDefaultPaymentMethod(PaymentMethod.CARD.setCardNumber(card.getNumber()));
+                        passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
+                        card.setUsedAsDefault(true);
                     }
                     return Strings.EMPTY;
                 })
