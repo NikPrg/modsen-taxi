@@ -3,7 +3,6 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-
     <changeSet id="v1-3-fill-drivers-table" author="Nikita Przhevalski">
         <loadData tableName="drivers" file="db/changelog/v1/data/drivers-data.csv"/>
         <rollback>

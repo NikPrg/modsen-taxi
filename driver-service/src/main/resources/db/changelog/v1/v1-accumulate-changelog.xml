@@ -6,5 +6,6 @@
    <include file="changesets/v1-create-driver-table.xml" relativeToChangelogFile="true"/>
    <include file="changesets/v1-create-car-table.xml" relativeToChangelogFile="true"/>
    <include file="changesets/v1-fill-tables-data.xml" relativeToChangelogFile="true"/>
+   <include file="changesets/v1-restart-sequences-ids.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

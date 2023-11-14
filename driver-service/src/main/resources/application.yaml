@@ -22,3 +22,6 @@ spring:
         generate_statistics: false
         format_sql: false
         show_sql: false
+
+  messages:
+    basename: messages-constants

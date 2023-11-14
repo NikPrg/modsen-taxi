@@ -1,4 +1,4 @@
-package com.example.driverservice.model;
+package com.example.driverservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,8 @@ import java.util.UUID;
 @Table(name = "drivers", indexes = @Index(name = "driver_eid_index", columnList = "externalId"))
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @EqualsAndHashCode(of = "externalId")
 public class Driver {
     @Id
@@ -30,8 +31,8 @@ public class Driver {
     private Double rate;
 
     @CreationTimestamp
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "driver")
+    @OneToOne(mappedBy = "driver", cascade = CascadeType.ALL)
     private Car car;
 }

@@ -1,15 +1,18 @@
-package com.example.driverservice.model;
+package com.example.driverservice.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "cars")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @EqualsAndHashCode(of = "externalId")
 public class Car {
 
@@ -26,7 +29,10 @@ public class Car {
 
     private String color;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "driver_id")
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @OneToOne
+    @JoinColumn(name = "driver_id", referencedColumnName = "id")
     private Driver driver;
 }
