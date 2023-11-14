@@ -1,0 +1,23 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="v1-3-fill-drivers-table" author="Nikita Przhevalski">
+        <loadData tableName="drivers" file="db/changelog/v1/data/drivers-data.csv"/>
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v1/sql/v1-delete-drivers-data.sql"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="v1-4-fill-cars-table" author="Nikita Przhevalski">
+        <loadData tableName="cars" file="db/changelog/v1/data/cars-data.csv"/>
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v1/sql/v1-delete-cars-data.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

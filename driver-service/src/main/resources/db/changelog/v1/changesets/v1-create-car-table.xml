@@ -1,0 +1,46 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-2-create-car-table" author="Nikita Przhevalski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="car_generator"/>
+                <tableExists tableName="cars"/>
+            </not>
+        </preConditions>
+
+        <createSequence sequenceName="car_generator" startValue="1" incrementBy="5"/>
+
+        <createTable tableName="cars">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="driver_id" type="bigint">
+                <constraints unique="true"
+                             foreignKeyName="driver-fk"
+                             referencedTableName="drivers"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="license_plate" type="varchar">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="model" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v1/sql/v1-drop-car-table.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

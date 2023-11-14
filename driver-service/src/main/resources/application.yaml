@@ -5,6 +5,9 @@ spring:
   application:
     name: driver-service
 
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+
   datasource:
     url: jdbc:postgresql://localhost:5432/taxi-drivers
     username: postgres

@@ -2,7 +2,9 @@ package com.example.driverservice.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +28,9 @@ public class Driver {
     private String phone;
 
     private Double rate;
+
+    @CreationTimestamp
+    private LocalDateTime created_at;
 
     @OneToOne(mappedBy = "driver")
     private Car car;

@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS card;
+DROP SEQUENCE IF EXISTS car_generator;
