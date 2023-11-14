@@ -4,21 +4,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import static com.example.passengerservice.util.RegexpConstants.*;
+
 public record PassengerRequestDto(
-        @NotBlank(message = "Name can not be blank")
-        @Size(min = 2, max = 100, message = "The name field must contain no less than 2 and no more than 100 letters")
+        @NotBlank(message = "{firstName.notBlank")
+        @Size(min = 2, max = 100, message = "{firstName.size}")
         String firstName,
-
-        @NotBlank(message = "Surname can not be blank")
-        @Size(min = 2, max = 100, message = "The surname field must contain no less than 2 and no more than 100 letters")
+        @NotBlank(message = "{lastName.notBlank}")
+        @Size(min = 2, max = 100, message = "{lastName.size}")
         String lastName,
-
-        @Pattern(regexp = "^\\+375 ?\\((17|29|33|44)\\) ?[0-9]{3}-[0-9]{2}-[0-9]{2}$",
-                message = "Incorrect format")
-        String phone,
-
-        @Pattern(regexp = "^[a-zA-Z0-9_!#$%&'+=?`{|}~^.-]+@[a-zA-Z0-9.-]+$",
-        message = "Incorrect email format")
-        String email
+        @Pattern(regexp = PHONE_REGEXP,
+                message = "{phone.incorrectFormat}")
+        String phone
 ) {
 }

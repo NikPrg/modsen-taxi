@@ -21,7 +21,7 @@ import static com.example.passengerservice.util.ExceptionMessagesConstants.*;
 
 @Service
 @RequiredArgsConstructor
-public class ICardService implements CardService {
+public class CardServiceImpl implements CardService {
 
     private final CardRepository cardRepo;
     private final PassengerRepository passengerRepo;
@@ -34,18 +34,18 @@ public class ICardService implements CardService {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
 
-        var externalId = cardRepo.findByNumber(cardDto.number())
+        UUID externalId = cardRepo.findByNumber(cardDto.number())
                 .map(storedCard -> {
-                    if (storedCard.passengers().contains(passenger)) {
+                    if (storedCard.getPassengers().contains(passenger)) {
                         throw new EntityAlreadyExistException(CARD_ALREADY_EXIST_ERROR_MESSAGE.formatted(passengerExternalId));
                     }
                     passenger.addCard(storedCard);
-                    return storedCard.externalId();
+                    return storedCard.getExternalId();
                 })
                 .orElseGet(() -> {
                     var newCard = cardMapper.toCard(cardDto);
                     passenger.addCard(newCard);
-                    return newCard.externalId();
+                    return newCard.getExternalId();
                 });
 
         return new CreateCardResponse(externalId);
@@ -56,7 +56,9 @@ public class ICardService implements CardService {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
 
-        return new CardResponseDto(passenger.cards().stream().map(cardMapper::toDto).collect(Collectors.toSet()));
+        return new CardResponseDto(passenger.getCards().stream()
+                .map(cardMapper::toDto)
+                .collect(Collectors.toSet()));
     }
 
     @Transactional
@@ -68,8 +70,8 @@ public class ICardService implements CardService {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
 
-        if(passenger.defaultPaymentMethod().cardNumber().equals(card.number()))
-            passenger.defaultPaymentMethod(PaymentMethod.CASH);
+        if (passenger.getDefaultPaymentMethod().getCardNumber().equals(card.getNumber()))
+            passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
 
         passenger.removeCard(card);
     }

@@ -1,9 +1,9 @@
 package com.example.passengerservice.util;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public  class HttpConstants {
-    public static final String PUBLIC_API_V1 = "public/api/v1";
+
+@UtilityClass
+public class HttpConstants {
+    public final String PUBLIC_API_V1 = "public/api/v1/passengers";
 }

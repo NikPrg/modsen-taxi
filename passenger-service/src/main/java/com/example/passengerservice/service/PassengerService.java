@@ -1,6 +1,6 @@
 package com.example.passengerservice.service;
 
-import com.example.passengerservice.dto.projections.PassengerView;
+import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
@@ -25,6 +25,5 @@ public interface PassengerService {
     void addCashAsDefaultPaymentMethod(UUID passengerExternalId);
 
     void delete(UUID externalId);
-
 
 }

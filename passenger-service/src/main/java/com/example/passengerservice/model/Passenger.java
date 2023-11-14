@@ -2,7 +2,6 @@ package com.example.passengerservice.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -11,12 +10,11 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "passengers")
+@Table(name = "passengers", indexes = @Index(name = "passenger_eid_index", columnList = "externalId"))
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
 @EqualsAndHashCode(of = "externalId")
-@Accessors(fluent = true)
 @Builder
 public class Passenger {
 
@@ -32,10 +30,6 @@ public class Passenger {
     private String lastName;
 
     private String phone;
-
-    private String email;
-
-    private String password;
 
     private Double rate;
 
@@ -59,12 +53,12 @@ public class Passenger {
 
     public void addCard(Card card) {
         this.cards.add(card);
-        card.passengers().add(this);
+        card.getPassengers().add(this);
     }
 
     public void removeCard(Card card) {
         this.cards.remove(card);
-        card.passengers().remove(this);
+        card.getPassengers().remove(this);
     }
 }
 

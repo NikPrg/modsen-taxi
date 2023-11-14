@@ -1,6 +1,6 @@
 package com.example.passengerservice.repository;
 
-import com.example.passengerservice.dto.projections.PassengerView;
+import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.model.Passenger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +23,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
     @Query(value = """
                         
             SELECT
-                p.external_id as id,
+                p.external_id as externalId,
                 p.first_name as firstName,
                 p.last_name as lastName,
                 p.phone as phone,

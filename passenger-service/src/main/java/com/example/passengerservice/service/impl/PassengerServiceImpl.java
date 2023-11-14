@@ -1,6 +1,6 @@
 package com.example.passengerservice.service.impl;
 
-import com.example.passengerservice.dto.projections.PassengerView;
+import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
@@ -25,18 +25,18 @@ import static com.example.passengerservice.util.ExceptionMessagesConstants.*;
 
 @Service
 @RequiredArgsConstructor
-public class IPassengerService implements PassengerService {
+public class PassengerServiceImpl implements PassengerService {
 
-    public final PassengerMapper passengerMapper;
+    private final PassengerMapper passengerMapper;
     private final PassengerRepository passengerRepo;
     private final CardRepository cardRepo;
 
     @Transactional
     @Override
     public CreatePassengerResponse signUp(PassengerRegistrationDto passengerDto) {
-        checkPhoneForUniqueness(passengerDto.phone());
         val passenger = passengerMapper.toPassenger(passengerDto);
-        return new CreatePassengerResponse(passengerRepo.save(passenger).externalId());
+        passengerRepo.save(passenger);
+        return passengerMapper.toCreateDto(passenger);
     }
 
     @Override
@@ -60,6 +60,7 @@ public class IPassengerService implements PassengerService {
         passengerMapper.updatePassenger(passengerDto, passenger);
         return passengerMapper.toDto(passenger);
     }
+
     @Transactional
     @Override
     public void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId) {
@@ -68,13 +69,15 @@ public class IPassengerService implements PassengerService {
 
         cardRepo.findByExternalId(cardExternalId)
                 .map(card -> {
-                    if (card.passengers().contains(passenger))
-                        passenger.defaultPaymentMethod(PaymentMethod.CARD.setCardNumber(card.number()));
-
+                    if (card.getPassengers().contains(passenger)) {
+                        passenger.setDefaultPaymentMethod(PaymentMethod.CARD.setCardNumber(card.getNumber()));
+                    }
                     return Strings.EMPTY;
                 })
                 .orElseThrow(() ->
                         new EntityNotFoundException(CARD_NOT_FOUND_ERROR_MESSAGE.formatted(cardExternalId)));
+
+        passengerRepo.save(passenger);
     }
 
     @Transactional
@@ -82,7 +85,8 @@ public class IPassengerService implements PassengerService {
     public void addCashAsDefaultPaymentMethod(UUID passengerExternalId) {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
-        passenger.defaultPaymentMethod(PaymentMethod.CASH);
+        passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
+        passengerRepo.save(passenger);
     }
 
     @Transactional
@@ -91,9 +95,4 @@ public class IPassengerService implements PassengerService {
         passengerRepo.deleteByExternalId(id);
     }
 
-    private void checkPhoneForUniqueness(String phone) {
-        if (passengerRepo.existsByPhone(phone)) {
-            throw new IllegalArgumentException(PASSENGER_WITH_THE_SAME_PHONE_IS_EXISTS_MESSAGE.formatted(phone));
-        }
-    }
 }

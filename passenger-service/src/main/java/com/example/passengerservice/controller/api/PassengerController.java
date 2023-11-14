@@ -1,6 +1,6 @@
 package com.example.passengerservice.controller.api;
 
-import com.example.passengerservice.dto.projections.PassengerView;
+import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
-import static com.example.passengerservice.util.HttpConstants.PUBLIC_API_V1;
+import static com.example.passengerservice.util.HttpConstants.*;
+
 
 @RestController
 @RequestMapping(PUBLIC_API_V1)
@@ -26,46 +27,46 @@ public class PassengerController {
 
     private final PassengerService passengerService;
 
-    @PostMapping("/passengers")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreatePassengerResponse createPassenger(@RequestBody @Valid PassengerRegistrationDto passengerDto) {
         return passengerService.signUp(passengerDto);
     }
 
-    @GetMapping("/passengers/{externalId}")
+    @GetMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
     public PassengerResponseDto findPassengerByExternalId(@PathVariable UUID externalId) {
         return passengerService.findPassengerByExternalId(externalId);
     }
 
-    @GetMapping("/passengers")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<PassengerView> findAllPassengers(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return passengerService.findAllPassengers(pageable);
     }
 
-    @PutMapping("/passengers/{externalId}")
+    @PutMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
     public PassengerResponseDto updatePassenger(@PathVariable UUID externalId,
                                                 @RequestBody @Valid PassengerRequestDto dto) {
         return passengerService.update(externalId, dto);
     }
 
-    @PatchMapping("/passengers/{passengerId}/cards/{cardId}")
+    @PatchMapping("{passengerId}/cards/{cardId}")
     @ResponseStatus(HttpStatus.OK)
     public void addCardAsDefaultPaymentMethod(@PathVariable UUID passengerId,
                                               @PathVariable UUID cardId) {
         passengerService.addCardAsDefaultPaymentMethod(passengerId, cardId);
     }
 
-    @PatchMapping("/passengers/{passengerId}/cash")
+    @PatchMapping("{passengerId}/cash")
     @ResponseStatus(HttpStatus.OK)
     public void addCashAsDefaultPaymentMethod(@PathVariable UUID passengerId) {
         passengerService.addCashAsDefaultPaymentMethod(passengerId);
     }
 
-    @DeleteMapping("/passengers/{externalId}")
+    @DeleteMapping("{externalId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePassenger(@PathVariable UUID externalId) {
         passengerService.delete(externalId);

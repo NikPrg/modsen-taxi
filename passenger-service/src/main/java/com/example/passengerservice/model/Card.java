@@ -2,7 +2,6 @@ package com.example.passengerservice.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -16,7 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter @Setter
 @EqualsAndHashCode(of = "externalId")
-@Accessors(fluent = true)
 @Builder
 public class Card {
 

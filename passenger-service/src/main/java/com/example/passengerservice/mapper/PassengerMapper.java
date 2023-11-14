@@ -2,6 +2,7 @@ package com.example.passengerservice.mapper;
 
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
+import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponseDto;
 import com.example.passengerservice.model.Passenger;
 import org.mapstruct.*;
@@ -23,4 +24,6 @@ public interface PassengerMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Passenger updatePassenger(PassengerRequestDto source, @MappingTarget Passenger target);
+
+    CreatePassengerResponse toCreateDto(Passenger passenger);
 }

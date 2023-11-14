@@ -13,6 +13,7 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -22,4 +23,5 @@ spring:
         format_sql: false
         show_sql: false
 
-
+  messages:
+    basename: messages-constants
