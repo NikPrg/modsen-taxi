@@ -1,5 +1,7 @@
 package com.example.passengerservice.service.impl;
 
+import com.example.passengerservice.model.Card;
+import com.example.passengerservice.model.Passenger;
 import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
@@ -14,6 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.logging.log4j.util.Strings;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -68,18 +71,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         cardRepo.findByExternalId(cardExternalId)
-                .map(card -> {
-                    if (card.getPassengers().contains(passenger)) {
-                        if (PaymentMethod.CASH.equals(passenger.getDefaultPaymentMethod())) {
-                            passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
-                            card.setUsedAsDefault(true);
-                        } else {
-                            passenger.getCards().forEach(pCard -> pCard.setUsedAsDefault(false));
-                            card.setUsedAsDefault(true);
-                        }
-                    }
-                    return Strings.EMPTY;
-                })
+                .map(card -> addCardIfPassengerContains(passenger, card))
                 .orElseThrow(() ->
                         new EntityNotFoundException(CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(cardExternalId)));
 
@@ -102,6 +94,19 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public void delete(UUID id) {
         passengerRepo.deleteByExternalId(id);
+    }
+
+    private String addCardIfPassengerContains(Passenger passenger, Card card) {
+        if (card.getPassengers().contains(passenger)) {
+            if (PaymentMethod.CASH.equals(passenger.getDefaultPaymentMethod())) {
+                passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
+                card.setUsedAsDefault(true);
+            } else {
+                passenger.getCards().forEach(pCard -> pCard.setUsedAsDefault(false));
+                card.setUsedAsDefault(true);
+            }
+        }
+        return Strings.EMPTY;
     }
 
 }

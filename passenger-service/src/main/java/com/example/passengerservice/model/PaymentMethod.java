@@ -10,10 +10,4 @@ import lombok.NoArgsConstructor;
 public enum PaymentMethod {
     CARD(),
     CASH();
-    private String cardNumber;
-
-    public PaymentMethod setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-        return this;
-    }
 }

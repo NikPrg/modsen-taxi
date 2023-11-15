@@ -77,10 +77,6 @@ public class CardServiceImpl implements CardService {
         } else {
             throw new CardNotBelongPassengerException(CARD_NOT_BELONG_PASSENGER_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId));
         }
-        if (passenger.getDefaultPaymentMethod().getCardNumber().equals(card.getNumber())) {
-            passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
-            
-        }
 
         passenger.removeCard(card);
     }
