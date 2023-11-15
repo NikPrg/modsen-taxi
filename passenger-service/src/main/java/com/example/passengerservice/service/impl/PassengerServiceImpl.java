@@ -70,10 +70,11 @@ public class PassengerServiceImpl implements PassengerService {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
-        cardRepo.findByExternalId(cardExternalId)
-                .map(card -> addCardIfPassengerContains(passenger, card))
+        var card = cardRepo.findByExternalId(cardExternalId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(cardExternalId)));
+
+        addCardIfPassengerContains(passenger, card);
 
         passengerRepo.save(passenger);
     }
@@ -96,7 +97,7 @@ public class PassengerServiceImpl implements PassengerService {
         passengerRepo.deleteByExternalId(id);
     }
 
-    private String addCardIfPassengerContains(Passenger passenger, Card card) {
+    private void addCardIfPassengerContains(Passenger passenger, Card card) {
         if (card.getPassengers().contains(passenger)) {
             if (PaymentMethod.CASH.equals(passenger.getDefaultPaymentMethod())) {
                 passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
@@ -106,7 +107,6 @@ public class PassengerServiceImpl implements PassengerService {
                 card.setUsedAsDefault(true);
             }
         }
-        return Strings.EMPTY;
     }
 
 }
