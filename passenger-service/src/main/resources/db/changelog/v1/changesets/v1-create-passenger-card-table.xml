@@ -1,0 +1,32 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-3-create-passenger-card-table" author="Nikita Przhevalski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="passengers_cards"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="passengers_cards">
+            <column name="passenger_id" type="bigint">
+                <constraints foreignKeyName="passenger-fk"
+                             referencedTableName="passengers"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="card_id" type="bigint">
+                <constraints foreignKeyName="card-fk"
+                             referencedTableName="cards"
+                             referencedColumnNames="id"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v1/sql/v1-drop-passenger-card-table.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
