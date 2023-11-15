@@ -71,8 +71,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         var card = cardRepo.findByExternalId(cardExternalId)
-                .orElseThrow(() ->
-                        new EntityNotFoundException(CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(cardExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(cardExternalId)));
 
         addCardIfPassengerContains(passenger, card);
 
