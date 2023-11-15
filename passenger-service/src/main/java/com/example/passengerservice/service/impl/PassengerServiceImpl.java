@@ -42,7 +42,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponseDto findPassengerByExternalId(UUID externalId) {
         val passenger = passengerRepo.findByExternalId(externalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(externalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         return passengerMapper.toDto(passenger);
     }
 
@@ -56,7 +56,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public PassengerResponseDto update(UUID externalId, PassengerRequestDto passengerDto) {
         var passenger = passengerRepo.findByExternalId(externalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(externalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         passengerMapper.updatePassenger(passengerDto, passenger);
         return passengerMapper.toDto(passenger);
     }
@@ -65,18 +65,23 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId) {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         cardRepo.findByExternalId(cardExternalId)
                 .map(card -> {
                     if (card.getPassengers().contains(passenger)) {
-                        passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
-                        card.setUsedAsDefault(true);
+                        if (PaymentMethod.CASH.equals(passenger.getDefaultPaymentMethod())) {
+                            passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
+                            card.setUsedAsDefault(true);
+                        } else {
+                            passenger.getCards().forEach(pCard -> pCard.setUsedAsDefault(false));
+                            card.setUsedAsDefault(true);
+                        }
                     }
                     return Strings.EMPTY;
                 })
                 .orElseThrow(() ->
-                        new EntityNotFoundException(CARD_NOT_FOUND_ERROR_MESSAGE.formatted(cardExternalId)));
+                        new EntityNotFoundException(CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(cardExternalId)));
 
         passengerRepo.save(passenger);
     }
@@ -85,8 +90,11 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public void addCashAsDefaultPaymentMethod(UUID passengerExternalId) {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+
+        passenger.getCards().forEach(card -> card.setUsedAsDefault(false));
         passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
+
         passengerRepo.save(passenger);
     }
 

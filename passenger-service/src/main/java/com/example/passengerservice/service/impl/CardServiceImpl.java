@@ -3,6 +3,7 @@ package com.example.passengerservice.service.impl;
 import com.example.passengerservice.dto.request.CardRegistrationDto;
 import com.example.passengerservice.dto.response.CardResponseDto;
 import com.example.passengerservice.dto.response.CreateCardResponse;
+import com.example.passengerservice.exception.CardNotBelongPassengerException;
 import com.example.passengerservice.exception.EntityAlreadyExistException;
 import com.example.passengerservice.mapper.CardMapper;
 import com.example.passengerservice.model.PaymentMethod;
@@ -32,12 +33,12 @@ public class CardServiceImpl implements CardService {
     public CreateCardResponse create(CardRegistrationDto cardDto, UUID passengerExternalId) {
 
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         UUID externalId = cardRepo.findByNumber(cardDto.number())
                 .map(storedCard -> {
                     if (storedCard.getPassengers().contains(passenger)) {
-                        throw new EntityAlreadyExistException(CARD_ALREADY_EXIST_ERROR_MESSAGE.formatted(passengerExternalId));
+                        throw new EntityAlreadyExistException(CARD_ALREADY_EXIST_EXCEPTION_MESSAGE.formatted(passengerExternalId));
                     }
                     passenger.addCard(storedCard);
                     return storedCard.getExternalId();
@@ -54,7 +55,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public CardResponseDto findCardsByPassengerExternalId(UUID passengerExternalId) {
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         return new CardResponseDto(passenger.getCards().stream()
                 .map(cardMapper::toDto)
@@ -65,11 +66,17 @@ public class CardServiceImpl implements CardService {
     @Override
     public void deletePassengerCard(UUID passengerExternalId, UUID cardExternalId) {
         var card = cardRepo.findByExternalId(cardExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(CARD_NOT_FOUND_ERROR_MESSAGE.formatted(cardExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(cardExternalId)));
 
         var passenger = passengerRepo.findByExternalId(passengerExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_ERROR_MESSAGE.formatted(passengerExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
+        if(card.getPassengers().contains(passenger)){
+            passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
+            passenger.removeCard(card);
+        } else {
+            throw new CardNotBelongPassengerException(CARD_NOT_BELONG_PASSENGER_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId));
+        }
         if (passenger.getDefaultPaymentMethod().getCardNumber().equals(card.getNumber())) {
             passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
             

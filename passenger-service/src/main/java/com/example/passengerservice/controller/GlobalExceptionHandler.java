@@ -1,6 +1,7 @@
 package com.example.passengerservice.controller;
 
 import com.example.passengerservice.dto.response.error.ErrorResponse;
+import com.example.passengerservice.exception.CardNotBelongPassengerException;
 import com.example.passengerservice.exception.EntityAlreadyExistException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handeValidationException(EntityNotFoundException ex) {
+    public ErrorResponse handeEntityNotFoundException(EntityNotFoundException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 
         if (log.isInfoEnabled()) {
-            log.error("Handled entity not found exceptionId: msg='{}', exceptionId='{}", message, exceptionId);
+            log.info("Handled entity not found exception: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()
@@ -41,12 +42,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityAlreadyExistException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handeValidationException(EntityAlreadyExistException ex) {
+    public ErrorResponse handeEntityAlreadyExistException(EntityAlreadyExistException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 
         if (log.isInfoEnabled()) {
-            log.error("Handled entity already exist exception: msg='{}', exceptionId='{}", message, exceptionId);
+            log.info("Handled entity already exist exception: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()
@@ -66,7 +67,7 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.joining(" | "));
 
         if (log.isInfoEnabled()) {
-            log.error("Handled method argument not valid exceptionId: msg='{}', exceptionId='{}", message, exceptionId);
+            log.info("Handled method argument not valid exception: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()
@@ -83,7 +84,25 @@ public class GlobalExceptionHandler {
         val message = ex.getMessage();
 
         if (log.isInfoEnabled()) {
-            log.error("Handled illegal argument error: msg='{}', exceptionId='{}", message, exceptionId);
+            log.info("Handled illegal argument exception: msg='{}', exceptionId='{}", message, exceptionId);
+        }
+
+        return ErrorResponse.builder()
+                .id(exceptionId)
+                .message(message)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+    }
+
+    @ExceptionHandler(CardNotBelongPassengerException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleCardNotBelongPassengerException(CardNotBelongPassengerException ex) {
+        val exceptionId = UUID.randomUUID().toString();
+        val message = ex.getMessage();
+
+        if (log.isInfoEnabled()) {
+            log.info("Handled card not belong passenger exception: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()
