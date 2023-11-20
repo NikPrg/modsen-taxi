@@ -1,14 +1,18 @@
 package com.example.driverservice.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "cars")
+@Table(name = "cars", indexes = @Index(name = "car_eid_index", columnList = "externalId"))
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

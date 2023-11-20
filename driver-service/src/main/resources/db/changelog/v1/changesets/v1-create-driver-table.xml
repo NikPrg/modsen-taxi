@@ -19,7 +19,7 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="external_id" type="uuid">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="first_name" type="varchar">
                 <constraints nullable="false"/>

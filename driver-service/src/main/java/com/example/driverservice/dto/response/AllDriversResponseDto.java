@@ -4,6 +4,7 @@ import com.example.driverservice.model.projections.DriverView;
 import lombok.Builder;
 
 import java.util.List;
+
 @Builder
 public record AllDriversResponseDto(
         List<DriverView> driverViewList,

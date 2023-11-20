@@ -4,7 +4,16 @@ import com.example.driverservice.dto.request.DriverRequestDto;
 import com.example.driverservice.dto.response.CreateDriverResponseDto;
 import com.example.driverservice.dto.response.DriverResponseDto;
 import com.example.driverservice.model.entity.Driver;
-import org.mapstruct.*;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
+import org.mapstruct.CollectionMappingStrategy;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.Builder;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,

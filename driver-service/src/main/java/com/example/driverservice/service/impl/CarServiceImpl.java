@@ -11,7 +11,6 @@ import com.example.driverservice.model.projections.CarView;
 import com.example.driverservice.repository.CarRepository;
 import com.example.driverservice.repository.DriverRepository;
 import com.example.driverservice.service.CarService;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -68,7 +67,6 @@ public class CarServiceImpl implements CarService {
         var driver = driverRepo.findByExternalId(driverExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(DRIVER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(driverExternalId)));
 
-        @Nullable
         var car = driver.getCar();
 
         if (ObjectUtils.isEmpty(car)) {

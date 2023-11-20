@@ -18,7 +18,7 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="external_id" type="uuid">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
             <column name="driver_id" type="bigint">
                 <constraints unique="true"
@@ -40,6 +40,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <createIndex tableName="cars" indexName="car_eid_index">
+            <column name="external_id"/>
+        </createIndex>
 
         <rollback>
             <sqlFile dbms="postgresql"
