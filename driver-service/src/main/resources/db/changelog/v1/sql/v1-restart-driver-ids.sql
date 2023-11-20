@@ -1,0 +1,1 @@
+ALTER SEQUENCE driver_generator RESTART WITH 15;

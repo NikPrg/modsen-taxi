@@ -4,3 +4,24 @@ server:
 spring:
   application:
     name: driver-service
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taxi-drivers
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        generate_statistics: false
+        format_sql: false
+        show_sql: false
+
+  messages:
+    basename: messages-constants
