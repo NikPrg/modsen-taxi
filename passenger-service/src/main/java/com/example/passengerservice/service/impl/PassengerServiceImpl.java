@@ -1,5 +1,6 @@
 package com.example.passengerservice.service.impl;
 
+import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.Card;
 import com.example.passengerservice.model.Passenger;
 import com.example.passengerservice.model.projections.PassengerView;
@@ -15,8 +16,6 @@ import com.example.passengerservice.service.PassengerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.logging.log4j.util.Strings;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -47,6 +46,13 @@ public class PassengerServiceImpl implements PassengerService {
         val passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         return passengerMapper.toDto(passenger);
+    }
+
+    @Override
+    public PaymentInfoResponse findPassengerPaymentInfo(UUID passengerExternalId) {
+        val passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+        return passengerMapper.toPaymentInfoDto(passenger);
     }
 
     @Transactional(readOnly = true)

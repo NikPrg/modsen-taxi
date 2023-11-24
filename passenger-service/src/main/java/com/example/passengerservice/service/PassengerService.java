@@ -1,5 +1,6 @@
 package com.example.passengerservice.service;
 
+import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
@@ -16,6 +17,8 @@ public interface PassengerService {
 
     PassengerResponseDto findPassengerByExternalId(UUID externalId);
 
+    PaymentInfoResponse findPassengerPaymentInfo(UUID passengerExternalId);
+
     Page<PassengerView> findAllPassengers(Pageable pageable);
 
     PassengerResponseDto update(UUID externalId, PassengerRequestDto passengerDto);
@@ -25,5 +28,4 @@ public interface PassengerService {
     void addCashAsDefaultPaymentMethod(UUID passengerExternalId);
 
     void delete(UUID externalId);
-
 }

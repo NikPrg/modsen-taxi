@@ -1,5 +1,6 @@
 package com.example.passengerservice.controller.api;
 
+import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
@@ -37,6 +38,12 @@ public class PassengerController {
     @ResponseStatus(HttpStatus.OK)
     public PassengerResponseDto findPassengerByExternalId(@PathVariable UUID externalId) {
         return passengerService.findPassengerByExternalId(externalId);
+    }
+
+    @GetMapping("{passengerExternalId}/paymentMethod")
+    @ResponseStatus(HttpStatus.OK)
+    public PaymentInfoResponse findPassengerPaymentInfo(@PathVariable UUID passengerExternalId){
+        return passengerService.findPassengerPaymentInfo(passengerExternalId);
     }
 
     @GetMapping
