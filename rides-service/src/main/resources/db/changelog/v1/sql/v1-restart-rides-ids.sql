@@ -1,1 +1,1 @@
-ALTER SEQUENCE ride_generator RESTART WITH 20;
+ALTER SEQUENCE ride_id_generator RESTART WITH 20;

@@ -20,6 +20,9 @@
             <column name="number" type="varchar">
                 <constraints nullable="false" unique="true"/>
             </column>
+            <column name="used_as_default" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
             <column name="created_at" type="timestamp">
                 <constraints nullable="false"/>
             </column>

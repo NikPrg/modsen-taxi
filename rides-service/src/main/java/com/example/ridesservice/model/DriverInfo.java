@@ -36,8 +36,8 @@ import java.util.UUID;
 public class DriverInfo {
 
     @Id
-    @SequenceGenerator(name = "driver_info_generator", allocationSize = 5)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "driver_info_generator")
+    @SequenceGenerator(name = "driver_info_id_generator", allocationSize = 5)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "driver_info_id_generator")
     private Long id;
 
     private UUID externalId;

@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DriverAlreadyInUseException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeDriverAlreadyInUseException(DriverAlreadyInUseException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DriverNotBelongRideException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeDriverNotBelongRideException(DriverNotBelongRideException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
@@ -111,7 +111,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RideAlreadyFinishedExceptionMessage.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeRideAlreadyFinishedExceptionMessage(RideAlreadyFinishedExceptionMessage ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
@@ -128,7 +128,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RideAlreadyStartedExceptionMessage.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeRideAlreadyStartedExceptionMessage(RideAlreadyStartedExceptionMessage ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
@@ -145,7 +145,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RideNotAcceptedException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeRideNotAcceptedException(RideNotAcceptedException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
@@ -162,7 +162,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RideNotStartedExceptionMessage.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeRideNotStartedExceptionMessage(RideNotStartedExceptionMessage ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();

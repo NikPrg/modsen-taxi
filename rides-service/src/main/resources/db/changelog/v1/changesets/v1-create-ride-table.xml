@@ -6,12 +6,12 @@
     <changeSet id="v1-2-create-ride-table" author="Nikita Przhevalski">
         <preConditions onFail="MARK_RAN">
             <not>
-                <sequenceExists sequenceName="ride_generator"/>
+                <sequenceExists sequenceName="ride_id_generator"/>
                 <tableExists tableName="rides"/>
             </not>
         </preConditions>
 
-        <createSequence sequenceName="ride_generator" startValue="1" incrementBy="10"/>
+        <createSequence sequenceName="ride_id_generator" startValue="1" incrementBy="10"/>
 
         <createTable tableName="rides">
             <column name="id" type="bigint">

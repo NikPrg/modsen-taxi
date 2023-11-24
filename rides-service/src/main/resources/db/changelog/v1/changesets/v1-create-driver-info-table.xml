@@ -6,12 +6,12 @@
     <changeSet id="v1-1-create-drivers-info-table" author="Nikita Przhevalski">
         <preConditions onFail="MARK_RAN">
             <not>
-                <sequenceExists sequenceName="driver_info_generator"/>
+                <sequenceExists sequenceName="driver_info_id_generator"/>
                 <tableExists tableName="drivers_info"/>
             </not>
         </preConditions>
 
-        <createSequence sequenceName="driver_info_generator" startValue="1" incrementBy="5"/>
+        <createSequence sequenceName="driver_info_id_generator" startValue="1" incrementBy="5"/>
 
         <createTable tableName="drivers_info">
             <column name="id" type="bigint">

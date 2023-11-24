@@ -36,8 +36,8 @@ import java.util.UUID;
 public class Ride {
 
     @Id
-    @SequenceGenerator(name = "ride_generator", allocationSize = 10)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ride_generator")
+    @SequenceGenerator(name = "ride_id_generator", allocationSize = 10)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ride_id_generator")
     private Long id;
 
     private UUID externalId;

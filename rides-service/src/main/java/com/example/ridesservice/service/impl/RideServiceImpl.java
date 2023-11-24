@@ -3,6 +3,7 @@ package com.example.ridesservice.service.impl;
 import com.example.ridesservice.dto.request.CreateRideRequest;
 import com.example.ridesservice.dto.response.PaymentInfoResponse;
 import com.example.ridesservice.dto.response.ride.*;
+import com.example.ridesservice.exception.DriverAlreadyInUseException;
 import com.example.ridesservice.exception.PassengerRideNotFoundException;
 import com.example.ridesservice.mapper.RideMapper;
 import com.example.ridesservice.model.Ride;
@@ -11,7 +12,6 @@ import com.example.ridesservice.model.projection.RideView;
 import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.service.RideService;
-import com.example.ridesservice.util.DriverVerifier;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,6 @@ public class RideServiceImpl implements RideService {
     private final RideMapper rideMapper;
     private final WebClient webClient;
     private final RideVerifier rideVerifier;
-    private final DriverVerifier driverVerifier;
     @Value("${app.routes.passengers.get-payment-method}")
     private String passengersGetPaymentMethodUri;
     @Value("${app.api.web-client.max-retry-attempts}")
@@ -88,7 +87,10 @@ public class RideServiceImpl implements RideService {
 
         var driver = driverInfoRepo.findByExternalId(driverExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(DRIVER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(driverExternalId)));
-        driverVerifier.verifyAcceptPossibility(driver);
+
+        if (DriverStatus.UNAVAILABLE.equals(driver.getDriverStatus())) {
+            throw new DriverAlreadyInUseException(DRIVER_ALREADY_IN_USE_EXCEPTION_MESSAGE.formatted(driverExternalId));
+        }
 
         rideMapper.updateRideOnAcceptance(driver, ride);
 
@@ -153,9 +155,13 @@ public class RideServiceImpl implements RideService {
 
         var pickUpAddress = createRideRequestDto.pickUpAddress();
         var destinationAddress = createRideRequestDto.destinationAddress();
-        var totalDistance = pickUpAddress.concat(destinationAddress).length() * Math.random() * 3;
+        var totalDistance = getTotalDistance(pickUpAddress, destinationAddress);
 
         return Math.round(totalDistance * baseCostPerKm);
+    }
+
+    private double getTotalDistance(String pickUpAddress, String destinationAddress) {
+        return pickUpAddress.concat(destinationAddress).length() * Math.random() * 3;
     }
 
     private AllRidesResponse buildAllRidesDto(Page<RideView> allPassengerRidesViews) {
