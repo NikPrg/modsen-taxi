@@ -1,7 +1,13 @@
 package com.example.ridesservice.controller.api;
 
-import com.example.ridesservice.dto.response.GetRideResponseDto;
+import com.example.ridesservice.dto.request.CreateRideRequest;
+import com.example.ridesservice.dto.response.ride.*;
+import com.example.ridesservice.service.RideService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,40 +28,44 @@ public class RideController {
 
     @GetMapping("/passengers/{passengerExternalId}/rides/{rideExternalId}")
     @ResponseStatus(HttpStatus.OK)
-    public GetRideResponseDto findRideByPassengerExternalId(@PathVariable UUID passengerExternalId,
-                                                            @PathVariable UUID rideExternalId) {
+    public GetRideResponse findRideByPassengerExternalId(@PathVariable UUID passengerExternalId,
+                                                         @PathVariable UUID rideExternalId) {
         return rideService.findRideByPassengerExternalId(passengerExternalId, rideExternalId);
     }
 
+    @GetMapping("/passengers/{passengerExternalId}/rides")
+    @ResponseStatus(HttpStatus.OK)
+    public AllRidesResponse findAllPassengerRides(
+            @PathVariable UUID passengerExternalId,
+            @PageableDefault(size = 5, sort = "rideCreatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return rideService.findAllPassengerRides(passengerExternalId, pageable);
+    }
 
     @PostMapping("/passengers/{passengerExternalId}/rides")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateRideResponseDto bookRide(@PathVariable UUID passengerExternalId,
-                                          @RequestBody CreateRideRequestDto createRideDto) {
+    public CreateRideResponse bookRide(@PathVariable UUID passengerExternalId,
+                                       @RequestBody @Valid CreateRideRequest createRideDto) {
         return rideService.bookRide(passengerExternalId, createRideDto);
     }
 
-
-    @PostMapping("/drivers/{driverExternalId}/rides/accept")
+    @PostMapping("/drivers/{driverExternalId}/rides/{rideExternalId}/accept")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public DriverInfoResponseDto acceptRide(@PathVariable UUID driverExternalId,
-                                            @RequestBody DriverInfoRequestDto driverRequest) {
-        return rideService.acceptRide(driverExternalId, driverRequest);
+    public AcceptRideResponse acceptRide(@PathVariable UUID driverExternalId,
+                                         @PathVariable UUID rideExternalId) {
+        return rideService.acceptRide(driverExternalId, rideExternalId);
     }
 
-    @PatchMapping("/drivers/{driverExternalId}/rides/start")
+    @PatchMapping("/drivers/{driverExternalId}/rides/{rideExternalId}/start")
     @ResponseStatus(HttpStatus.OK)
-    public RideResponseDto startRide(@PathVariable UUID driverExternalId,
-                                     @RequestBody DriverInfoRequestDto driverRequest) {
-        return rideService.startRide(driverExternalId, driverRequest);
+    public StartRideResponse startRide(@PathVariable UUID driverExternalId,
+                                       @PathVariable UUID rideExternalId) {
+        return rideService.startRide(driverExternalId, rideExternalId);
     }
 
-    @PatchMapping("/drivers/{driverExternalId}/rides/finish")
+    @PatchMapping("/drivers/{driverExternalId}/rides/{rideExternalId}/finish")
     @ResponseStatus(HttpStatus.OK)
-    public RideResponseDto finishRide(@PathVariable UUID driverExternalId,
-                                      @RequestBody DriverInfoRequest driverRequest) {
-        return rideService.finishRide(driverExternalId, driverRequest);
+    public FinishRideResponse finishRide(@PathVariable UUID driverExternalId,
+                                         @PathVariable UUID rideExternalId) {
+        return rideService.finishRide(driverExternalId, rideExternalId);
     }
-
-
 }

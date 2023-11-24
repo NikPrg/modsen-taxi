@@ -1,1 +1,40 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: rides-service
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taxi-rides
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        generate_statistics: false
+        format_sql: false
+        show_sql: false
+
+
+app:
+  config:
+    base-cost-per-km: 1
+
+  api:
+    web-client:
+      connection-timeout-in-ms: 1000
+      max-retry-attempts: 3
+      delay-in-ms: 1000
+
+  routes:
+    passengers:
+      get-payment-method: http://localhost:8080/public/api/v1/passengers/{passengerExternalId}/paymentMethod
 

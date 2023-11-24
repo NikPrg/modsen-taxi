@@ -1,21 +1,23 @@
 package com.example.ridesservice.model;
 
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Getter;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Setter
+@Getter
+@Builder
 @Embeddable
-@Setter @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class CarInfo {
 
-    private String licensePlate;
+    private String carLicensePlate;
 
-    private String model;
+    private String carModel;
 
-    private String color;
+    private String carColor;
 }

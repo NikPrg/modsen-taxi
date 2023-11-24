@@ -2,11 +2,24 @@ package com.example.ridesservice.model;
 
 import com.example.ridesservice.model.enums.PaymentMethod;
 import com.example.ridesservice.model.enums.RideStatus;
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -45,7 +58,7 @@ public class Ride {
 
     private LocalTime rideStartedAt;
 
-    private LocalTime rideFinishedAt;
+    private long rideDuration;
 
     @CreationTimestamp
     private LocalDateTime rideCreatedAt;
