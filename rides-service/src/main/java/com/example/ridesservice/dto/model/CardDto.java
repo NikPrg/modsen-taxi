@@ -1,4 +1,4 @@
-package com.example.passengerservice.dto.model;
+package com.example.ridesservice.dto.model;
 
 public record CardDto(
         String number,

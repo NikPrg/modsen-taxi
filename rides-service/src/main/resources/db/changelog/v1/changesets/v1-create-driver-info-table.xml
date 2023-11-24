@@ -1,0 +1,49 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-1-create-drivers-info-table" author="Nikita Przhevalski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="driver_info_id_generator"/>
+                <tableExists tableName="drivers_info"/>
+            </not>
+        </preConditions>
+
+        <createSequence sequenceName="driver_info_id_generator" startValue="1" incrementBy="5"/>
+
+        <createTable tableName="drivers_info">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="first_name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_license_plate" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="car_model" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="car_color" type="varchar">
+                <constraints nullable="true"/>
+            </column>
+            <column name="driver_status" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v1/sql/v1-drop-drivers-info-table.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -4,6 +4,7 @@ import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponseDto;
+import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.Passenger;
 import org.mapstruct.*;
 
@@ -26,4 +27,7 @@ public interface PassengerMapper {
     Passenger updatePassenger(PassengerRequestDto source, @MappingTarget Passenger target);
 
     CreatePassengerResponse toCreateDto(Passenger passenger);
+
+    @Mapping(target = "paymentMethod", source = "defaultPaymentMethod")
+    PaymentInfoResponse toPaymentInfoDto(Passenger passenger);
 }

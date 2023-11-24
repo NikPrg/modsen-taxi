@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS rides;
+DROP SEQUENCE IF EXISTS ride_generator;

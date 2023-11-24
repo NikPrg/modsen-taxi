@@ -1,0 +1,11 @@
+id,external_id,first_name,last_name,car_license_plate,car_model,car_color,driver_status
+1,64a1b808-82df-11ee-b962-0242ac120002,Jorick,Vertelov,8682AX-3,LADA VESTA,gray,AVAILABLE
+2,64a1b808-82df-11ee-b962-0242ac120003,Anna,Smith,9511BM-7,Toyota Camry,blue,AVAILABLE
+3,64a1b808-82df-11ee-b962-0242ac120004,John,Doe,5123KT-4,BMW X5,black,AVAILABLE
+4,64a1b808-82df-11ee-b962-0242ac120005,Lisa,Johnson,7369OP-5,Ford Mustang,red,AVAILABLE
+5,64a1b808-82df-11ee-b962-0242ac120006,Alex,Miller,9912ZN-9,Honda Civic,white,AVAILABLE
+6,64a1b808-82df-11ee-b962-0242ac120007,Olivia,Williams,1478YX-2,Nissan Altima,silver,AVAILABLE
+7,64a1b808-82df-11ee-b962-0242ac120008,Daniel,Moore,6234QA-1,Chevrolet Malibu,green,AVAILABLE
+8,64a1b808-82df-11ee-b962-0242ac120009,Emily,Wilson,5782PD-6,Hyundai Elantra,yellow,AVAILABLE
+9,64a1b808-82df-11ee-b962-0242ac120010,Michael,Brown,3690KG-8,Volkswagen Golf,orange,AVAILABLE
+10,64a1b808-82df-11ee-b962-0242ac120011,Sophia,Jones,8145MH-0,Mercedes-Benz C-Class,purple,AVAILABLE
