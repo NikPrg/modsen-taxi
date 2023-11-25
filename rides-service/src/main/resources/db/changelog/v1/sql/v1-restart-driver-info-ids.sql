@@ -1,1 +1,0 @@
-ALTER SEQUENCE driver_info_id_generator RESTART WITH 15;

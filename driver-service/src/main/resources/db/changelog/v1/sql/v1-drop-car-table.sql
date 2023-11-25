@@ -1,3 +1,0 @@
-DROP INDEX IF EXISTS car_eid_index;
-DROP TABLE IF EXISTS cars;
-DROP SEQUENCE IF EXISTS car_generator;
