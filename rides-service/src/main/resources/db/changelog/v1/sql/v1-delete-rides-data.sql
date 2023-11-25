@@ -1,0 +1,2 @@
+DELETE FROM rides
+WHERE id IN (SELECT id FROM rides ORDER BY id LIMIT 10);

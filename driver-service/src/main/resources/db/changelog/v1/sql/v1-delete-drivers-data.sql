@@ -1,0 +1,2 @@
+DELETE FROM drivers
+WHERE id IN (SELECT id FROM drivers ORDER BY id LIMIT 10);

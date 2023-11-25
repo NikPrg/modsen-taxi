@@ -1,0 +1,12 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <include file="changesets/v1-create-passenger-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/v1-create-card-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/v1-create-passenger-card-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/v1-fill-tables-data.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/v1-restart-sequence-ids.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>
