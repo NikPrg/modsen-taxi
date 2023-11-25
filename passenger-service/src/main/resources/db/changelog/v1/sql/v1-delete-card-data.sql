@@ -1,2 +1,0 @@
-DELETE FROM cards
-WHERE id IN (SELECT id FROM cards ORDER BY id LIMIT 10);

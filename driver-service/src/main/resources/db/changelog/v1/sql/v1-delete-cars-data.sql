@@ -1,2 +1,0 @@
-DELETE FROM cars
-WHERE id IN (SELECT id FROM cars ORDER BY id LIMIT 10);
