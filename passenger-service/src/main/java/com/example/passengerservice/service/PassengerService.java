@@ -18,7 +18,7 @@ public interface PassengerService {
 
     PassengerResponseDto findPassengerByExternalId(UUID externalId);
 
-    PaymentInfoResponse findPassengerPaymentInfo(UUID passengerExternalId);
+    PaymentInfoResponse findPassengerPaymentInfo(UUID externalId);
 
     Page<PassengerView> findAllPassengers(Pageable pageable);
 
@@ -26,7 +26,7 @@ public interface PassengerService {
 
     void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId);
 
-    void addCashAsDefaultPaymentMethod(UUID passengerExternalId);
+    void addCashAsDefaultPaymentMethod(UUID externalId);
 
     void delete(UUID externalId);
 

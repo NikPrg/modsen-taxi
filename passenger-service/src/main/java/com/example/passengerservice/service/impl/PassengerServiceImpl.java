@@ -51,9 +51,9 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PaymentInfoResponse findPassengerPaymentInfo(UUID passengerExternalId) {
-        val passenger = passengerRepo.findByExternalId(passengerExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+    public PaymentInfoResponse findPassengerPaymentInfo(UUID externalId) {
+        val passenger = passengerRepo.findByExternalId(externalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         return passengerMapper.toPaymentInfoDto(passenger);
     }
 
@@ -100,9 +100,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Transactional
     @Override
-    public void addCashAsDefaultPaymentMethod(UUID passengerExternalId) {
-        var passenger = passengerRepo.findByExternalId(passengerExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+    public void addCashAsDefaultPaymentMethod(UUID externalId) {
+        var passenger = passengerRepo.findByExternalId(externalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
 
         passenger.getCards().forEach(card -> card.setUsedAsDefault(false));
         passenger.setDefaultPaymentMethod(PaymentMethod.CASH);

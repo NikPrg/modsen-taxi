@@ -21,23 +21,23 @@ public class CardController {
 
     private final CardService cardService;
 
-    @PostMapping("{passengerId}/cards")
+    @PostMapping("{passengerExternalId}/cards")
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateCardResponse createCard(@PathVariable UUID passengerId,
+    public CreateCardResponse createCard(@PathVariable UUID passengerExternalId,
                                          @RequestBody @Valid CardRegistrationDto cardDto) {
-        return cardService.create(cardDto, passengerId);
+        return cardService.create(cardDto, passengerExternalId);
     }
 
-    @GetMapping("{passengerId}/cards")
+    @GetMapping("{passengerExternalId}/cards")
     @ResponseStatus(HttpStatus.OK)
-    public CardResponseDto findCardsByPassengerId(@PathVariable UUID passengerId) {
-        return cardService.findCardsByPassengerExternalId(passengerId);
+    public CardResponseDto findCardsByPassengerExternalId(@PathVariable UUID passengerExternalId) {
+        return cardService.findCardsByPassengerExternalId(passengerExternalId);
     }
 
-    @DeleteMapping("{passengerId}/cards/{cardId}")
+    @DeleteMapping("{passengerExternalId}/cards/{cardExternalId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePassengerCard(@PathVariable UUID passengerId,
-                                    @PathVariable UUID cardId) {
-        cardService.deletePassengerCard(passengerId, cardId);
+    public void deletePassengerCard(@PathVariable UUID passengerExternalId,
+                                    @PathVariable UUID cardExternalId) {
+        cardService.deletePassengerCard(passengerExternalId, cardExternalId);
     }
 }

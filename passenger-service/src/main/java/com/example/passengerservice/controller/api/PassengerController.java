@@ -41,10 +41,10 @@ public class PassengerController {
         return passengerService.findPassengerByExternalId(externalId);
     }
 
-    @GetMapping("{passengerExternalId}/paymentMethod")
+    @GetMapping("{externalId}/paymentMethod")
     @ResponseStatus(HttpStatus.OK)
-    public PaymentInfoResponse findPassengerPaymentInfo(@PathVariable UUID passengerExternalId){
-        return passengerService.findPassengerPaymentInfo(passengerExternalId);
+    public PaymentInfoResponse findPassengerPaymentInfo(@PathVariable UUID externalId){
+        return passengerService.findPassengerPaymentInfo(externalId);
     }
 
     @GetMapping
@@ -68,17 +68,17 @@ public class PassengerController {
         passengerService.updatePassengerPhone(externalId, changePhoneRequest);
     }
 
-    @PatchMapping("{passengerId}/cards/{cardId}")
+    @PatchMapping("{passengerExternalId}/cards/{cardExternalId}")
     @ResponseStatus(HttpStatus.OK)
-    public void addCardAsDefaultPaymentMethod(@PathVariable UUID passengerId,
-                                              @PathVariable UUID cardId) {
-        passengerService.addCardAsDefaultPaymentMethod(passengerId, cardId);
+    public void addCardAsDefaultPaymentMethod(@PathVariable UUID passengerExternalId,
+                                              @PathVariable UUID cardExternalId) {
+        passengerService.addCardAsDefaultPaymentMethod(passengerExternalId, cardExternalId);
     }
 
-    @PatchMapping("{passengerId}/cash")
+    @PatchMapping("{externalId}/cash")
     @ResponseStatus(HttpStatus.OK)
-    public void addCashAsDefaultPaymentMethod(@PathVariable UUID passengerId) {
-        passengerService.addCashAsDefaultPaymentMethod(passengerId);
+    public void addCashAsDefaultPaymentMethod(@PathVariable UUID externalId) {
+        passengerService.addCashAsDefaultPaymentMethod(externalId);
     }
 
     @DeleteMapping("{externalId}")
