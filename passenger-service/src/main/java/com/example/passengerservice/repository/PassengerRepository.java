@@ -17,7 +17,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
     @Query("SELECT CASE WHEN COUNT(p) >= 1 THEN true ELSE false END FROM Passenger p WHERE p.phone = :phone")
     boolean existsByPhone(String phone);
 
-    @Query("SELECT p FROM Passenger p JOIN FETCH p.cards c WHERE p.externalId = :externalId")
+    @Query("SELECT p FROM Passenger p LEFT JOIN FETCH p.cards c WHERE p.externalId = :externalId")
     Optional<Passenger> findByExternalId(@Param("externalId") UUID externalId);
 
     @Query(value = """

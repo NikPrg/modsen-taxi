@@ -13,4 +13,6 @@ public class ExceptionMessagesConstants {
     public final String CARD_NOT_BELONG_PASSENGER_EXCEPTION_MESSAGE =
             "Card with externalId = %s, does not belong to the passenger with externalId = %s";
 
+    public final String USER_WITH_THE_SAME_PHONE_IS_EXISTS_MESSAGE =
+            "User with similar phone = %s is already exists";
 }

@@ -1,5 +1,6 @@
 package com.example.passengerservice.controller.api;
 
+import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
@@ -58,6 +59,13 @@ public class PassengerController {
     public PassengerResponseDto updatePassenger(@PathVariable UUID externalId,
                                                 @RequestBody @Valid PassengerRequestDto dto) {
         return passengerService.update(externalId, dto);
+    }
+
+    @PatchMapping("{externalId}/phone")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updatePassengerPhone(@PathVariable UUID externalId,
+                                     @RequestBody @Valid ChangePhoneRequest changePhoneRequest){
+        passengerService.updatePassengerPhone(externalId, changePhoneRequest);
     }
 
     @PatchMapping("{passengerId}/cards/{cardId}")

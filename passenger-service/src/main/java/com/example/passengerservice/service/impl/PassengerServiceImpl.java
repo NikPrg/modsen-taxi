@@ -1,5 +1,6 @@
 package com.example.passengerservice.service.impl;
 
+import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.Card;
 import com.example.passengerservice.model.Passenger;
@@ -36,6 +37,7 @@ public class PassengerServiceImpl implements PassengerService {
     @Transactional
     @Override
     public CreatePassengerResponse signUp(PassengerRegistrationDto passengerDto) {
+        checkPhoneForUniqueness(passengerDto.phone());
         val passenger = passengerMapper.toPassenger(passengerDto);
         passengerRepo.save(passenger);
         return passengerMapper.toCreateDto(passenger);
@@ -68,6 +70,18 @@ public class PassengerServiceImpl implements PassengerService {
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         passengerMapper.updatePassenger(passengerDto, passenger);
         return passengerMapper.toDto(passenger);
+    }
+
+    @Transactional
+    @Override
+    public void updatePassengerPhone(UUID externalId, ChangePhoneRequest changePhoneRequest) {
+        var updatedPhone = changePhoneRequest.phone();
+
+        checkPhoneForUniqueness(updatedPhone);
+        var passenger = passengerRepo.findByExternalId(externalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
+
+        passenger.setPhone(updatedPhone);
     }
 
     @Transactional
@@ -111,6 +125,12 @@ public class PassengerServiceImpl implements PassengerService {
                 passenger.getCards().forEach(pCard -> pCard.setUsedAsDefault(false));
                 card.setUsedAsDefault(true);
             }
+        }
+    }
+
+    private void checkPhoneForUniqueness(String phone){
+        if(passengerRepo.existsByPhone(phone)){
+            throw new IllegalArgumentException(USER_WITH_THE_SAME_PHONE_IS_EXISTS_MESSAGE.formatted(phone));
         }
     }
 

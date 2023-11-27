@@ -1,5 +1,6 @@
 package com.example.passengerservice.service;
 
+import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
@@ -28,4 +29,7 @@ public interface PassengerService {
     void addCashAsDefaultPaymentMethod(UUID passengerExternalId);
 
     void delete(UUID externalId);
+
+    void updatePassengerPhone(UUID externalId, ChangePhoneRequest changePhoneRequest);
+
 }

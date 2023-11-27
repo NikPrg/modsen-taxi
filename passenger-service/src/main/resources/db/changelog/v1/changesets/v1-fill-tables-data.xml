@@ -4,7 +4,7 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="v1-4-fill-passengers-table" author="Nikita Przhevalski">
-        <loadData tableName="passengers" file="db/data/passengers-data.csv"/>
+        <loadData tableName="passengers" file="db/changelog/v1/data/passengers-data.csv"/>
         <rollback>
             <sqlFile dbms="postgresql"
                      path="db/changelog/v1/sql/v1-delete-passenger-data.sql"/>
@@ -12,7 +12,7 @@
     </changeSet>
 
     <changeSet id="v1-5-fill-cards-table" author="Nikita Przhevalski">
-        <loadData tableName="cards" file="db/data/cards-data.csv"/>
+        <loadData tableName="cards" file="db/changelog/v1/data/cards-data.csv"/>
         <rollback>
             <sqlFile dbms="postgresql"
                      path="db/changelog/v1/sql/v1-delete-card-data.sql"/>
@@ -20,7 +20,7 @@
     </changeSet>
 
     <changeSet id="v1-6-fill-passengers-cards-table" author="Nikita Przhevalski">
-        <loadData tableName="passengers_cards" file="db/data/passengers-cards-data.csv"/>
+        <loadData tableName="passengers_cards" file="db/changelog/v1/data/passengers-cards-data.csv"/>
         <rollback>
             <sqlFile dbms="postgresql"
                      path="db/changelog/v1/sql/v1-delete-passenger-card-data.sql"/>
