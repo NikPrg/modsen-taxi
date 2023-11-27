@@ -16,9 +16,9 @@ import org.mapstruct.*;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface PassengerMapper {
-
     @Mapping(target = "externalId", expression = "java(java.util.UUID.randomUUID())")
     @Mapping(target = "rate", constant = "5.0")
+    @Mapping(target = "defaultPaymentMethod", constant = "CASH")
     Passenger toPassenger(PassengerRegistrationDto passengerDto);
 
     PassengerResponseDto toDto(Passenger passenger);
@@ -26,6 +26,7 @@ public interface PassengerMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Passenger updatePassenger(PassengerRequestDto source, @MappingTarget Passenger target);
 
+    @Mapping(target = "paymentMethod", source = "defaultPaymentMethod")
     CreatePassengerResponse toCreateDto(Passenger passenger);
 
     @Mapping(target = "paymentMethod", source = "defaultPaymentMethod")

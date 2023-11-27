@@ -12,7 +12,6 @@ import org.mapstruct.*;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface CardMapper {
-
     CardDto toDto(Card card);
 
     @Mapping(target = "externalId", expression = "java(java.util.UUID.randomUUID())")
