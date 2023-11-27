@@ -74,10 +74,11 @@ public class CardServiceImpl implements CardService {
         if(card.getPassengers().contains(passenger)){
             passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
             passenger.removeCard(card);
+            if(card.getPassengers().isEmpty()){
+                cardRepo.delete(card);
+            }
         } else {
             throw new CardNotBelongPassengerException(CARD_NOT_BELONG_PASSENGER_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId));
         }
-
-        passenger.removeCard(card);
     }
 }
