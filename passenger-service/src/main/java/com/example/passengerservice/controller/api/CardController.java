@@ -30,7 +30,7 @@ public class CardController {
 
     @GetMapping("{passengerId}/cards")
     @ResponseStatus(HttpStatus.OK)
-    public CardResponseDto findCardByPassengerId(@PathVariable UUID passengerId) {
+    public CardResponseDto findCardsByPassengerId(@PathVariable UUID passengerId) {
         return cardService.findCardsByPassengerExternalId(passengerId);
     }
 
