@@ -69,14 +69,14 @@ public class PassengerController {
     }
 
     @PatchMapping("{passengerExternalId}/cards/{cardExternalId}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addCardAsDefaultPaymentMethod(@PathVariable UUID passengerExternalId,
                                               @PathVariable UUID cardExternalId) {
         passengerService.addCardAsDefaultPaymentMethod(passengerExternalId, cardExternalId);
     }
 
     @PatchMapping("{externalId}/cash")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addCashAsDefaultPaymentMethod(@PathVariable UUID externalId) {
         passengerService.addCashAsDefaultPaymentMethod(externalId);
     }

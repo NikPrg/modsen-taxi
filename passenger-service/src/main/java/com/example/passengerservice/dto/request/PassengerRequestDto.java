@@ -1,10 +1,7 @@
 package com.example.passengerservice.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
-import static com.example.passengerservice.util.RegexpConstants.*;
 
 public record PassengerRequestDto(
         @NotBlank(message = "{firstName.notBlank")

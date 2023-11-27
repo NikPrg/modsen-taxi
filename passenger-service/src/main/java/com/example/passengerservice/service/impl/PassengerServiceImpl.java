@@ -2,6 +2,7 @@ package com.example.passengerservice.service.impl;
 
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.exception.CardNotBelongPassengerException;
 import com.example.passengerservice.model.Card;
 import com.example.passengerservice.model.Passenger;
 import com.example.passengerservice.model.projections.PassengerView;
@@ -125,6 +126,8 @@ public class PassengerServiceImpl implements PassengerService {
                 passenger.getCards().forEach(pCard -> pCard.setUsedAsDefault(false));
                 card.setUsedAsDefault(true);
             }
+        } else {
+            throw new CardNotBelongPassengerException(CARD_NOT_BELONG_PASSENGER_EXCEPTION_MESSAGE.formatted(card.getExternalId(), passenger.getExternalId()));
         }
     }
 
