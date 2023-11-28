@@ -43,7 +43,7 @@ public class PassengerController {
 
     @GetMapping("{externalId}/paymentMethod")
     @ResponseStatus(HttpStatus.OK)
-    public PaymentInfoResponse findPassengerPaymentInfo(@PathVariable UUID externalId){
+    public PaymentInfoResponse findPassengerPaymentInfo(@PathVariable UUID externalId) {
         return passengerService.findPassengerPaymentInfo(externalId);
     }
 
@@ -64,7 +64,7 @@ public class PassengerController {
     @PatchMapping("{externalId}/phone")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updatePassengerPhone(@PathVariable UUID externalId,
-                                     @RequestBody @Valid ChangePhoneRequest changePhoneRequest){
+                                     @RequestBody @Valid ChangePhoneRequest changePhoneRequest) {
         passengerService.updatePassengerPhone(externalId, changePhoneRequest);
     }
 

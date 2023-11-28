@@ -7,6 +7,7 @@ import lombok.Builder;
 
 import java.util.Set;
 import java.util.UUID;
+
 @Builder
 public record CreatePassengerResponse(
         Long id,
@@ -18,4 +19,5 @@ public record CreatePassengerResponse(
         PaymentMethod paymentMethod,
         Discount discount,
         Set<CardDto> cards
-) {}
+) {
+}

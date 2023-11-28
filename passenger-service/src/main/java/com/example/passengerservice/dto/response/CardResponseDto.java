@@ -1,10 +1,10 @@
 package com.example.passengerservice.dto.response;
 
-import com.example.passengerservice.dto.model.CardDto;
+import com.example.passengerservice.dto.model.PassengerCardDto;
 
-import java.util.Set;
+import java.util.List;
 
 public record CardResponseDto(
-        Set<CardDto> cards
+        List<PassengerCardDto> cards
 ) {
 }

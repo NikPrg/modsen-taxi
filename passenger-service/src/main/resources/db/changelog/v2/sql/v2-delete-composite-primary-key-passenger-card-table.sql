@@ -1,0 +1,2 @@
+ALTER TABLE passengers_cards
+DROP CONSTRAINT pk_passenger_card;

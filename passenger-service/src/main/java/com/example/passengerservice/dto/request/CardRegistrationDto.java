@@ -6,7 +6,7 @@ import static com.example.passengerservice.util.RegexpConstants.*;
 
 public record CardRegistrationDto(
         @Pattern(regexp = CARD_REGEXP,
-        message = "{card.incorrectFormat}")
+                message = "{card.incorrectFormat}")
         String number
 ) {
 }

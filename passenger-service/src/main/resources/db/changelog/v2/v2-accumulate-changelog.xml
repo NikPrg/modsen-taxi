@@ -4,5 +4,9 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <include file="changesets/v2-add-unique-phone-constraint.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/v2-delete-used-as-default-column-card-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/v2-delete-created-at-column-card-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/v2-add-new-columns-passenger-card-table.xml" relativeToChangelogFile="true"/>
+    <include file="changesets/v2-add-composite-primary-key-passenger-card-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
