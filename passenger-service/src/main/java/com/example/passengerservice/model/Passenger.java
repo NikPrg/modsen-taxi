@@ -23,13 +23,17 @@ import lombok.Setter;
 
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 
 @Entity
 @Table(name = "passengers", indexes = @Index(name = "passenger_eid_index", columnList = "externalId"))
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @EqualsAndHashCode(of = "externalId")
 @Builder
 public class Passenger {
@@ -69,17 +73,7 @@ public class Passenger {
     }
 
     public void removeCard(Card card) {
-       for (Iterator<PassengerCard> iterator = cards.iterator(); iterator.hasNext(); ){
-           PassengerCard passengerCard = iterator.next();
-
-           if(passengerCard.getPassenger().equals(this) && passengerCard.getCard().equals(card)){
-               iterator.remove();
-               passengerCard.getCard().getPassengers().remove(passengerCard);
-               passengerCard.setPassenger(null);
-               passengerCard.setCard(null);
-           }
-       }
+        cards.removeIf(passengerCard -> passengerCard.getPassenger().equals(this)
+                && passengerCard.getCard().equals(card));
     }
-
 }
-
