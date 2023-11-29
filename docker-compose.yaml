@@ -79,7 +79,7 @@ services:
       - kafka
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                     cub kafka-ready -b kafka:29092 1 30 && \
-                    kafka-topics --create --topic driver-creation-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092 && \
+                    kafka-topics --create --topic driver-info-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092 && \
                     kafka-console-producer --bootstrap-server kafka:29092 --topic users < /data/message.json'"
 
 volumes:
