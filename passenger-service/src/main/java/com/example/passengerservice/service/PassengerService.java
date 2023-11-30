@@ -1,11 +1,12 @@
 package com.example.passengerservice.service;
 
-import com.example.passengerservice.dto.response.PaymentInfoResponse;
-import com.example.passengerservice.model.projections.PassengerView;
+import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponseDto;
+import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.model.projections.PassengerView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,7 +18,7 @@ public interface PassengerService {
 
     PassengerResponseDto findPassengerByExternalId(UUID externalId);
 
-    PaymentInfoResponse findPassengerPaymentInfo(UUID passengerExternalId);
+    PaymentInfoResponse findPassengerPaymentInfo(UUID externalId);
 
     Page<PassengerView> findAllPassengers(Pageable pageable);
 
@@ -25,7 +26,10 @@ public interface PassengerService {
 
     void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId);
 
-    void addCashAsDefaultPaymentMethod(UUID passengerExternalId);
+    void addCashAsDefaultPaymentMethod(UUID externalId);
 
     void delete(UUID externalId);
+
+    void updatePassengerPhone(UUID externalId, ChangePhoneRequest changePhoneRequest);
+
 }

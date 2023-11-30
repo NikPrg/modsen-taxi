@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @Repository
 public interface CardRepository extends JpaRepository<Card, Long> {
-    @Query("SELECT c FROM Card c JOIN FETCH c.passengers p WHERE c.externalId = :externalId")
+    @Query("SELECT c FROM Card c JOIN FETCH c.passengers p JOIN FETCH p.passenger WHERE c.externalId = :externalId")
     Optional<Card> findByExternalId(UUID externalId);
 
-    @Query("SELECT c FROM Card c JOIN FETCH c.passengers p WHERE c.number = :number")
+    @Query("SELECT c FROM Card c JOIN FETCH c.passengers p JOIN FETCH p.passenger WHERE c.number = :number")
     Optional<Card> findByNumber(String number);
 }

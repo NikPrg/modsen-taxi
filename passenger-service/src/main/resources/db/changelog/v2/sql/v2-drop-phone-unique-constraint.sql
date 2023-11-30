@@ -1,0 +1,1 @@
+ALTER TABLE passengers DROP CONSTRAINT passenger_phone_unique_c;

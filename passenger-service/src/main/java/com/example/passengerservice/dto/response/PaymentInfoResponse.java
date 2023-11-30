@@ -1,12 +1,12 @@
 package com.example.passengerservice.dto.response;
 
-import com.example.passengerservice.dto.model.CardDto;
+import com.example.passengerservice.dto.model.PassengerCardDto;
 import com.example.passengerservice.model.PaymentMethod;
 
-import java.util.Set;
+import java.util.List;
 
 public record PaymentInfoResponse(
         PaymentMethod paymentMethod,
-        Set<CardDto> cards
+        List<PassengerCardDto> cards
 ) {
 }

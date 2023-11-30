@@ -1,7 +1,7 @@
 package com.example.passengerservice.repository;
 
-import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.model.Passenger;
+import com.example.passengerservice.model.projections.PassengerView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +17,9 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
     @Query("SELECT CASE WHEN COUNT(p) >= 1 THEN true ELSE false END FROM Passenger p WHERE p.phone = :phone")
     boolean existsByPhone(String phone);
 
-    @Query("SELECT p FROM Passenger p JOIN FETCH p.cards c WHERE p.externalId = :externalId")
+    @Query("SELECT p FROM Passenger p LEFT JOIN FETCH p.cards c LEFT JOIN FETCH c.card WHERE p.externalId = :externalId")
+    Optional<Passenger> findByExternalIdFetch(@Param("externalId") UUID externalId);
+
     Optional<Passenger> findByExternalId(@Param("externalId") UUID externalId);
 
     @Query(value = """
@@ -35,5 +37,4 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
             """, nativeQuery = true)
     Page<PassengerView> findAllPassengersView(Pageable pageable);
 
-    void deleteByExternalId(UUID externalId);
 }

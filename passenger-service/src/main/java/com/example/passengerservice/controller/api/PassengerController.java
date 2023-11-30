@@ -1,5 +1,6 @@
 package com.example.passengerservice.controller.api;
 
+import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
@@ -14,7 +15,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -40,10 +50,10 @@ public class PassengerController {
         return passengerService.findPassengerByExternalId(externalId);
     }
 
-    @GetMapping("{passengerExternalId}/paymentMethod")
+    @GetMapping("{externalId}/paymentMethod")
     @ResponseStatus(HttpStatus.OK)
-    public PaymentInfoResponse findPassengerPaymentInfo(@PathVariable UUID passengerExternalId){
-        return passengerService.findPassengerPaymentInfo(passengerExternalId);
+    public PaymentInfoResponse findPassengerPaymentInfo(@PathVariable UUID externalId) {
+        return passengerService.findPassengerPaymentInfo(externalId);
     }
 
     @GetMapping
@@ -60,17 +70,24 @@ public class PassengerController {
         return passengerService.update(externalId, dto);
     }
 
-    @PatchMapping("{passengerId}/cards/{cardId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void addCardAsDefaultPaymentMethod(@PathVariable UUID passengerId,
-                                              @PathVariable UUID cardId) {
-        passengerService.addCardAsDefaultPaymentMethod(passengerId, cardId);
+    @PatchMapping("{externalId}/phone")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updatePassengerPhone(@PathVariable UUID externalId,
+                                     @RequestBody @Valid ChangePhoneRequest changePhoneRequest) {
+        passengerService.updatePassengerPhone(externalId, changePhoneRequest);
     }
 
-    @PatchMapping("{passengerId}/cash")
-    @ResponseStatus(HttpStatus.OK)
-    public void addCashAsDefaultPaymentMethod(@PathVariable UUID passengerId) {
-        passengerService.addCashAsDefaultPaymentMethod(passengerId);
+    @PatchMapping("{passengerExternalId}/cards/{cardExternalId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addCardAsDefaultPaymentMethod(@PathVariable UUID passengerExternalId,
+                                              @PathVariable UUID cardExternalId) {
+        passengerService.addCardAsDefaultPaymentMethod(passengerExternalId, cardExternalId);
+    }
+
+    @PatchMapping("{externalId}/cash")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addCashAsDefaultPaymentMethod(@PathVariable UUID externalId) {
+        passengerService.addCashAsDefaultPaymentMethod(externalId);
     }
 
     @DeleteMapping("{externalId}")

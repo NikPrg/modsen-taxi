@@ -6,19 +6,26 @@ import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponseDto;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.Passenger;
-import org.mapstruct.*;
+import org.mapstruct.BeanMapping;
+import org.mapstruct.Builder;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.CollectionMappingStrategy;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 
 @Mapper(
         componentModel = "spring",
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
         builder = @Builder(disableBuilder = true),
-        uses = {CardMapper.class},
+        uses = {PassengerCardMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface PassengerMapper {
-
     @Mapping(target = "externalId", expression = "java(java.util.UUID.randomUUID())")
     @Mapping(target = "rate", constant = "5.0")
+    @Mapping(target = "defaultPaymentMethod", constant = "CASH")
     Passenger toPassenger(PassengerRegistrationDto passengerDto);
 
     PassengerResponseDto toDto(Passenger passenger);
@@ -26,6 +33,7 @@ public interface PassengerMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Passenger updatePassenger(PassengerRequestDto source, @MappingTarget Passenger target);
 
+    @Mapping(target = "paymentMethod", source = "defaultPaymentMethod")
     CreatePassengerResponse toCreateDto(Passenger passenger);
 
     @Mapping(target = "paymentMethod", source = "defaultPaymentMethod")

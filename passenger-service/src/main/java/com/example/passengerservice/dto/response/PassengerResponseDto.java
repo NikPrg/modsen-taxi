@@ -9,4 +9,5 @@ public record PassengerResponseDto(
         String lastName,
         String phone,
         Double rate
-) {}
+) {
+}

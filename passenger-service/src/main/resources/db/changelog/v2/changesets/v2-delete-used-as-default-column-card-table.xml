@@ -1,0 +1,14 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v2-2-delete-used-as-default-column-card-table" author="Nikita Przhevalski">
+        <dropColumn tableName="cards" columnName="used_as_default"/>
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v2/sql/v2-add-used-as-default-column-card-table.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

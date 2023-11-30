@@ -36,5 +36,5 @@ app:
 
   routes:
     passengers:
-      get-payment-method: http://localhost:8080/public/api/v1/passengers/{passengerExternalId}/paymentMethod
+      get-payment-method: http://localhost:8080/public/api/v1/passengers/{externalId}/paymentMethod
 

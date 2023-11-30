@@ -4,9 +4,9 @@ import jakarta.validation.constraints.Pattern;
 
 import static com.example.passengerservice.util.RegexpConstants.*;
 
-public record CardRegistrationDto(
-        @Pattern(regexp = CARD_REGEXP,
-                message = "{card.incorrectFormat}")
-        String number
+public record ChangePhoneRequest(
+        @Pattern(regexp = PHONE_REGEXP,
+                message = "{phone.incorrectFormat}")
+        String phone
 ) {
 }
