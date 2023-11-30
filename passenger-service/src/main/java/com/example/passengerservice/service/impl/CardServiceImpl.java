@@ -40,7 +40,7 @@ public class CardServiceImpl implements CardService {
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         UUID externalId = cardRepo.findByNumber(cardDto.number())
-                .map(storedCard -> this.addCardIfNotContained(passengerExternalId, passenger, storedCard))
+                .map(storedCard -> addCardIfNotContained(passengerExternalId, passenger, storedCard))
                 .orElseGet(() -> this.createAndAddNewCard(cardDto, passenger));
 
         return new CreateCardResponse(externalId);
