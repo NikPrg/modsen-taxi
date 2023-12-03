@@ -9,14 +9,14 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Index;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.EqualsAndHashCode;
-import jakarta.persistence.Index;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;

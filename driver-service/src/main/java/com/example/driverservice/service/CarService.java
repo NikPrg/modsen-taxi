@@ -1,20 +1,21 @@
 package com.example.driverservice.service;
 
-import com.example.driverservice.dto.request.CarRequestDto;
-import com.example.driverservice.dto.response.AllCarsResponseDto;
-import com.example.driverservice.dto.response.CarResponseDto;
+import com.example.driverservice.dto.request.CarRequest;
+import com.example.driverservice.dto.request.UpdateCarRequest;
+import com.example.driverservice.dto.response.AllCarsResponse;
+import com.example.driverservice.dto.response.CarResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
 public interface CarService {
-    CarResponseDto createCar(UUID driverExternalId, CarRequestDto carRequest);
+    CarResponse createCar(UUID driverExternalId, CarRequest carRequest);
 
-    CarResponseDto findByExternalId(UUID externalId);
+    CarResponse findByExternalId(UUID externalId);
 
-    AllCarsResponseDto findAllCars(Pageable pageable);
+    AllCarsResponse findAllCars(Pageable pageable);
 
-    CarResponseDto updateDriverCar(UUID driverExternalId, CarRequestDto carRequestDto);
+    CarResponse updateDriverCar(UUID driverExternalId, UpdateCarRequest updateCarRequest);
 
     void deleteDriverCar(UUID driverExternalId, UUID carExternalId);
 }

@@ -25,3 +25,12 @@ spring:
 
   messages:
     basename: messages-constants
+
+app:
+  api:
+    web-client:
+      connection-timeout-in-ms: 1000
+
+  routes:
+    rides:
+      accept-ride-method: http://localhost:8082/public/api/v1/rides/{rideExternalId}/drivers/{driverExternalId}/accept

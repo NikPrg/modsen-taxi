@@ -1,8 +1,9 @@
-package com.example.ridesservice.config.kafka.consumer;
+package com.example.driverservice.config.kafka.consumer;
 
-import com.example.ridesservice.amqp.message.DriverInfoMessage;
-import com.example.ridesservice.model.enums.DriverStatus;
-import com.example.ridesservice.service.DriverInfoService;
+
+import com.example.driverservice.amqp.message.DriverStatusMessage;
+import com.example.driverservice.amqp.message.RideInfoMessage;
+import com.example.driverservice.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -20,17 +21,21 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class KafkaConsumerConfig {
 
-    private final DriverInfoService driverInfoService;
+    private final DriverService driverService;
 
     @Bean
-    public IntegrationFlow consumeFromKafka(ConsumerFactory<String, String> consumerFactory) {
-        return IntegrationFlow.from(Kafka.messageDrivenChannelAdapter(consumerFactory, "driver-info-events"))
-                .route("payload.driverStatus", r -> r
-                        .subFlowMapping(DriverStatus.CREATED, fl -> fl.handle(driverInfoService, "saveNewDriverData"))
-                        .defaultOutputToParentFlow())
-                .handle(driverInfoService, "updateDriverData")
+    public IntegrationFlow consumeNotificationFromKafka(ConsumerFactory<String, String> consumerFactory) {
+        return IntegrationFlow.from(Kafka.messageDrivenChannelAdapter(consumerFactory, "ride-info-events"))
+                .handle(driverService, "notificationDrivers")
                 .get();
 
+    }
+
+    @Bean
+    public IntegrationFlow consumeDriverStatusFromKafka(ConsumerFactory<String, String> consumerFactory) {
+        return IntegrationFlow.from(Kafka.messageDrivenChannelAdapter(consumerFactory, "driver-status-events"))
+                .handle(driverService, "updateDriverStatus")
+                .get();
     }
 
     @Bean
@@ -44,8 +49,11 @@ public class KafkaConsumerConfig {
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092",
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class,
-                JsonDeserializer.TYPE_MAPPINGS, "driverInfoMessage:" + DriverInfoMessage.class.getName(),
+                JsonDeserializer.TYPE_MAPPINGS,
+                "rideInfoMessage:" + RideInfoMessage.class.getName() + "," +
+                        "driverStatusMessage:" + DriverStatusMessage.class.getName(),
                 ConsumerConfig.GROUP_ID_CONFIG, "test-group"
         );
     }
+
 }

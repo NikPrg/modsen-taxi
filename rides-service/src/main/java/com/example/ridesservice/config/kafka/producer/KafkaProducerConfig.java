@@ -1,6 +1,7 @@
-package com.example.driverservice.config.kafka.producer;
+package com.example.ridesservice.config.kafka.producer;
 
-import com.example.driverservice.amqp.message.DriverInfoMessage;
+import com.example.ridesservice.amqp.message.DriverStatusMessage;
+import com.example.ridesservice.amqp.message.RideInfoMessage;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -23,11 +24,16 @@ public class KafkaProducerConfig {
     @Bean
     public IntegrationFlow sendToKafkaFlow() {
         return f -> f
-                .channel("driverInfoKafkaChannel")
+                .channel("rideInfoKafkaChannel")
                 .handle(Kafka.outboundChannelAdapter(kafkaTemplate())
                         .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
                         .headerMapper(mapper())
-                        .topic("driver-info-events"));
+                        .topic("ride-info-events"))
+                .channel("driverStatusKafkaChannel")
+                .handle(Kafka.outboundChannelAdapter(kafkaTemplate())
+                        .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
+                        .headerMapper(mapper())
+                        .topic("driver-status-events"));
     }
 
     @Bean
@@ -46,7 +52,12 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public MessageChannel driverInfoKafkaChannel() {
+    public MessageChannel rideInfoKafkaChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    public MessageChannel driverStatusKafkaChannel() {
         return new DirectChannel();
     }
 
@@ -56,7 +67,10 @@ public class KafkaProducerConfig {
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092",
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
-                JsonSerializer.TYPE_MAPPINGS, "driverInfoMessage:" + DriverInfoMessage.class.getName()
+                JsonSerializer.TYPE_MAPPINGS,
+                "rideInfoMessage:" + RideInfoMessage.class.getName() + "," +
+                        "driverStatusMessage:" + DriverStatusMessage.class.getName()
+
         );
     }
 }

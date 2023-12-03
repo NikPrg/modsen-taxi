@@ -1,21 +1,28 @@
 package com.example.driverservice.service;
 
-import com.example.driverservice.dto.request.DriverRequestDto;
-import com.example.driverservice.dto.response.AllDriversResponseDto;
-import com.example.driverservice.dto.response.CreateDriverResponseDto;
-import com.example.driverservice.dto.response.DriverResponseDto;
+import com.example.driverservice.amqp.message.DriverStatusMessage;
+import com.example.driverservice.amqp.message.RideInfoMessage;
+import com.example.driverservice.dto.request.DriverRequest;
+import com.example.driverservice.dto.request.UpdateDriverRequest;
+import com.example.driverservice.dto.response.AllDriversResponse;
+import com.example.driverservice.dto.response.CreateDriverResponse;
+import com.example.driverservice.dto.response.DriverResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
 public interface DriverService {
-    CreateDriverResponseDto createDriver(DriverRequestDto createDriverRequestDto);
+    CreateDriverResponse createDriver(DriverRequest createDriverRequest);
 
-    DriverResponseDto findDriverByExternalId(UUID externalId);
+    DriverResponse findDriverByExternalId(UUID externalId);
 
-    AllDriversResponseDto findAllDrivers(Pageable pageable);
+    AllDriversResponse findAllDrivers(Pageable pageable);
 
-    DriverResponseDto updateDriver(UUID externalId, DriverRequestDto driverRequestDto);
+    DriverResponse updateDriver(UUID externalId, UpdateDriverRequest updateDriverRequest);
 
     void deleteDriver(UUID externalId);
+
+    void notificationDrivers(RideInfoMessage rideInfoMessage);
+
+    void updateDriverStatus(DriverStatusMessage driverStatusMessage);
 }

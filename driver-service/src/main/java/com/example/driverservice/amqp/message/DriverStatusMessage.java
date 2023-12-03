@@ -7,11 +7,8 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Builder
-public record DriverInfoMessage(
-        UUID externalId,
-        String firstName,
-        String lastName,
-        DriverStatus driverStatus,
-        CarInfoMessage carInfoMessage
+public record DriverStatusMessage(
+        UUID driverExternalId,
+        DriverStatus driverStatus
 ) implements Serializable {
 }

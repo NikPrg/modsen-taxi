@@ -2,7 +2,7 @@ package com.example.driverservice.dto.response;
 
 import java.util.UUID;
 
-public record CarResponseDto(
+public record CarResponse(
         Long id,
         UUID externalId,
         String licensePlate,

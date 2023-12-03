@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record AllDriversResponseDto(
+public record AllDriversResponse(
         List<DriverView> driverViewList,
         int currentPageNumber,
         int totalPages,
