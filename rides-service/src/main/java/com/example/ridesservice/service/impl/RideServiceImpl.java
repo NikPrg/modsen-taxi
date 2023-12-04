@@ -1,6 +1,6 @@
 package com.example.ridesservice.service.impl;
 
-import com.example.ridesservice.amqp.channelGateway.KafkaChannelGateway;
+import com.example.ridesservice.amqp.handler.SendRequestHandler;
 import com.example.ridesservice.dto.request.CreateRideRequest;
 import com.example.ridesservice.dto.response.PaymentInfoResponse;
 import com.example.ridesservice.dto.response.ride.*;
@@ -14,7 +14,7 @@ import com.example.ridesservice.model.projection.RideView;
 import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.service.RideService;
-import com.example.ridesservice.util.BuildFactory;
+import com.example.ridesservice.util.DataComposerUtils;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -45,9 +44,9 @@ public class RideServiceImpl implements RideService {
     private final DriverInfoRepository driverInfoRepo;
     private final RideMapper rideMapper;
     private final WebClient webClient;
-    private final KafkaChannelGateway kafkaChannelGateway;
+    private final SendRequestHandler sendRequestHandler;
     private final RideVerifier rideVerifier;
-    private final BuildFactory buildFactory;
+    private final DataComposerUtils dataComposerUtils;
     @Value("${app.routes.passengers.get-payment-method}")
     private String passengersGetPaymentMethodUri;
     @Value("${app.api.web-client.max-retry-attempts}")
@@ -70,7 +69,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public AllRidesResponse findAllPassengerRides(UUID passengerExternalId, Pageable pageable) {
         Page<RideView> allPassengerRidesViews = rideRepo.findByPassengerExternalId(passengerExternalId, pageable);
-        return buildFactory.buildAllRidesDto(allPassengerRidesViews);
+        return dataComposerUtils.buildAllRidesDto(allPassengerRidesViews);
     }
 
     @Transactional
@@ -79,8 +78,7 @@ public class RideServiceImpl implements RideService {
         var rideCost = calculateRideCost(createRideDto);
         var ride = rideMapper.toRide(createRideDto, passengerExternalId, rideCost);
 
-        kafkaChannelGateway.sendRideInfoRequestToKafka(
-                new GenericMessage<>(buildFactory.buildRideInfoMessage(ride)));
+        sendRequestHandler.sendRideInfoRequestToKafka(dataComposerUtils.buildRideInfoMessage(ride));
 
         rideRepo.save(ride);
 
@@ -118,8 +116,7 @@ public class RideServiceImpl implements RideService {
 
         initiateRideStartActions(ride);
 
-        kafkaChannelGateway.sendDriverStatusRequestToKafka(
-                new GenericMessage<>(buildFactory.buildDriverStatusMessage(ride.getDriver())));
+        sendRequestHandler.sendDriverStatusRequestToKafka(dataComposerUtils.buildDriverStatusMessage(ride.getDriver()));
 
         return rideMapper.toStartRideDto(ride);
     }
@@ -140,8 +137,7 @@ public class RideServiceImpl implements RideService {
         var driver = ride.getDriver();
         driver.setDriverStatus(DriverStatus.AVAILABLE);
 
-        kafkaChannelGateway.sendDriverStatusRequestToKafka(
-                new GenericMessage<>(buildFactory.buildDriverStatusMessage(driver)));
+        sendRequestHandler.sendDriverStatusRequestToKafka(dataComposerUtils.buildDriverStatusMessage(driver));
 
         return rideMapper.toFinishRideResponse(ride);
     }

@@ -31,6 +31,7 @@ public interface DriverMapper {
     Driver toDriver(DriverRequest createDriverRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "driverStatus", constant = "NO_CAR")
     void updateDriver(UpdateDriverRequest driverRequest, @MappingTarget Driver storedDriver);
 
     DriverResponse toDto(Driver driver);

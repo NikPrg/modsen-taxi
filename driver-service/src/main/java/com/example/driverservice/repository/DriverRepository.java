@@ -1,6 +1,7 @@
 package com.example.driverservice.repository;
 
 import com.example.driverservice.model.entity.Driver;
+import com.example.driverservice.model.enums.DriverStatus;
 import com.example.driverservice.model.projections.DriverView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,4 +31,5 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
             """, nativeQuery = true)
     Page<DriverView> findAllDriversViews(Pageable pageable);
 
+    Optional<Driver> findDriverByDriverStatus(DriverStatus driverStatus);
 }

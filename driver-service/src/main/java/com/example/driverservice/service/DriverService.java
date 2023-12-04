@@ -22,7 +22,7 @@ public interface DriverService {
 
     void deleteDriver(UUID externalId);
 
-    void notificationDrivers(RideInfoMessage rideInfoMessage);
+    void notifyDrivers(RideInfoMessage rideInfoMessage);
 
     void updateDriverStatus(DriverStatusMessage driverStatusMessage);
 }

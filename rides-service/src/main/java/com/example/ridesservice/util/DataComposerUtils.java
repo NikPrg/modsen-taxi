@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class BuildFactory {
+public class DataComposerUtils {
     public AllRidesResponse buildAllRidesDto(Page<RideView> allPassengerRidesViews) {
         return AllRidesResponse.builder()
                 .rideViewList(allPassengerRidesViews.getContent())

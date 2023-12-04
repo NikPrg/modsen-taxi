@@ -2,8 +2,10 @@ package com.example.ridesservice.config.kafka.producer;
 
 import com.example.ridesservice.amqp.message.DriverStatusMessage;
 import com.example.ridesservice.amqp.message.RideInfoMessage;
+import com.example.ridesservice.util.KafkaUtils;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.IntegrationMessageHeaderAccessor;
@@ -21,19 +23,28 @@ import java.util.Map;
 
 @Configuration
 public class KafkaProducerConfig {
+    private static final String RIDE_INFO_KAFKA_CHANNEL = "rideInfoKafkaChannel";
+    private static final String DRIVER_STATUS_KAFKA_CHANNEL = "driverStatusKafkaChannel";
+
+    @Value("${app.kafka.topic.ride-info-events}")
+    private String rideInfoEventsTopic;
+
+    @Value("${app.kafka.topic.driver-status-events}")
+    private String driverStatusEventsTopic;
+
     @Bean
     public IntegrationFlow sendToKafkaFlow() {
         return f -> f
-                .channel("rideInfoKafkaChannel")
+                .channel(RIDE_INFO_KAFKA_CHANNEL)
                 .handle(Kafka.outboundChannelAdapter(kafkaTemplate())
                         .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
                         .headerMapper(mapper())
-                        .topic("ride-info-events"))
-                .channel("driverStatusKafkaChannel")
+                        .topic(rideInfoEventsTopic))
+                .channel(DRIVER_STATUS_KAFKA_CHANNEL)
                 .handle(Kafka.outboundChannelAdapter(kafkaTemplate())
                         .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
                         .headerMapper(mapper())
-                        .topic("driver-status-events"));
+                        .topic(driverStatusEventsTopic));
     }
 
     @Bean
@@ -63,14 +74,12 @@ public class KafkaProducerConfig {
 
     @Bean
     public Map<String, Object> kafkaConfigs() {
+        String typeMappings = KafkaUtils.buildTypeMappings(RideInfoMessage.class, DriverStatusMessage.class);
+
         return Map.of(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092",
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
-                JsonSerializer.TYPE_MAPPINGS,
-                "rideInfoMessage:" + RideInfoMessage.class.getName() + "," +
-                        "driverStatusMessage:" + DriverStatusMessage.class.getName()
-
+                JsonSerializer.TYPE_MAPPINGS, typeMappings
         );
     }
 }

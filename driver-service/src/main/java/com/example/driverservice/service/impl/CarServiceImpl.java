@@ -1,6 +1,6 @@
 package com.example.driverservice.service.impl;
 
-import com.example.driverservice.amqp.channelGateway.KafkaChannelGateway;
+import com.example.driverservice.amqp.handler.SendRequestHandler;
 import com.example.driverservice.dto.request.CarRequest;
 import com.example.driverservice.dto.request.UpdateCarRequest;
 import com.example.driverservice.dto.response.AllCarsResponse;
@@ -14,13 +14,12 @@ import com.example.driverservice.model.projections.CarView;
 import com.example.driverservice.repository.CarRepository;
 import com.example.driverservice.repository.DriverRepository;
 import com.example.driverservice.service.CarService;
-import com.example.driverservice.util.BuildFactory;
+import com.example.driverservice.util.DataComposerUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +34,8 @@ public class CarServiceImpl implements CarService {
     private final CarRepository carRepo;
     private final DriverRepository driverRepo;
     private final CarMapper carMapper;
-    private final KafkaChannelGateway kafkaChannelGateway;
-    private final BuildFactory buildFactory;
+    private final SendRequestHandler sendRequestHandler;
+    private final DataComposerUtils dataComposerUtils;
 
     @Transactional
     @Override
@@ -53,8 +52,7 @@ public class CarServiceImpl implements CarService {
         carRepo.save(car);
         driver.setDriverStatus(DriverStatus.AVAILABLE);
 
-        kafkaChannelGateway.sendDriverInfoRequestToKafka(
-                new GenericMessage<>(buildFactory.buildDriverInfoMessage(driver)));
+        sendRequestHandler.sendDriverInfoRequestToKafka(dataComposerUtils.buildDriverInfoMessage(driver));
 
         return carMapper.toDto(car);
     }
@@ -70,7 +68,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public AllCarsResponse findAllCars(Pageable pageable) {
         Page<CarView> allCarsViews = carRepo.findAllCarsViews(pageable);
-        return buildFactory.buildAllCarsDto(allCarsViews);
+        return dataComposerUtils.buildAllCarsDto(allCarsViews);
     }
 
     @Transactional
@@ -88,8 +86,7 @@ public class CarServiceImpl implements CarService {
         carMapper.updateCar(updateCarRequest, car);
         driverRepo.save(driver);
 
-        kafkaChannelGateway.sendDriverInfoRequestToKafka(
-                new GenericMessage<>(buildFactory.buildDriverInfoMessage(driver)));
+        sendRequestHandler.sendDriverInfoRequestToKafka(dataComposerUtils.buildDriverInfoMessage(driver));
 
         return carMapper.toDto(car);
     }
@@ -111,8 +108,7 @@ public class CarServiceImpl implements CarService {
         carRepo.delete(car);
         driver.setDriverStatus(DriverStatus.NO_CAR);
 
-        kafkaChannelGateway.sendDriverInfoRequestToKafka(
-                new GenericMessage<>(buildFactory.buildDriverInfoMessage(driver)));
+        sendRequestHandler.sendDriverInfoRequestToKafka(dataComposerUtils.buildDriverInfoMessage(driver));
     }
 
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class BuildFactory {
+public class DataComposerUtils {
 
     private final CarMapper carMapper;
 

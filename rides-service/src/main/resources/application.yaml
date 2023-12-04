@@ -23,10 +23,23 @@ spring:
         format_sql: false
         show_sql: false
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: rides-service-group
 
 app:
   config:
     base-cost-per-km: 1
+
+  kafka:
+    topic:
+      ride-info-events: ride-info-events
+      driver-status-events: driver-status-events
+      driver-info-events: driver-info-events
 
   api:
     web-client:
