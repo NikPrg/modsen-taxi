@@ -57,7 +57,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
-
   kafka-ui:
     container_name: kafka-ui-modsen
     image: provectuslabs/kafka-ui:latest
@@ -71,17 +70,14 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:7.2.1
+    image: bitnami/kafka:3.5
     volumes:
-      - ./data/message.json:/data/message.json
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./kafka-init-topics.sh:/opt/bitnami/kafka-init-topics.sh
     depends_on:
       - kafka
-    command: "bash -c 'echo Waiting for Kafka to be ready... && \
-                    cub kafka-ready -b kafka:29092 1 30 && \
-                    kafka-topics --create --topic driver-info-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092 && \
-                    kafka-topics --create --topic ride-info-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092 && \
-                    kafka-topics --create --topic driver-status-events --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:29092 && \
-                    kafka-console-producer --bootstrap-server kafka:29092 --topic users < /data/message.json'"
+    command: "/opt/bitnami/kafka-init-topics.sh"
+
 
 volumes:
   pgadmin-data:
