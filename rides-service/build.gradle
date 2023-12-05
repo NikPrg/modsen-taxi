@@ -25,6 +25,7 @@ ext {
     mapstructVersion = "1.5.5.Final"
     lombokVersion = "1.18.30"
     lombokMapstructBindingVersion = "0.2.0"
+    springIntegrationVersion = "6.2.0"
 }
 
 dependencies {
@@ -33,6 +34,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.liquibase:liquibase-core'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-integration'
+    implementation "org.springframework.integration:spring-integration-kafka:${springIntegrationVersion}"
+    implementation "org.springframework.integration:spring-integration-http:${springIntegrationVersion}"
     compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

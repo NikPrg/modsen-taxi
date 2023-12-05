@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record AllCarsResponseDto(
+public record AllCarsResponse(
         List<CarView> carViewList,
         int currentPageNumber,
         int totalPages,

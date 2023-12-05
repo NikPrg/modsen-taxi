@@ -16,5 +16,11 @@
     <changeSet id="2023-11-14-14-15-Nikita" author="Nikita Przhevalski">
         <tagDatabase tag="v-1.0"/>
     </changeSet>
+    
+    <include file="v2/v2-accumulate-changelog.xml" relativeToChangelogFile="true"/>
+    
+    <changeSet id="2023-11-28-19-15-Nikita" author="Nikita Przhevalski">
+        <tagDatabase tag="v-2.0"/>
+    </changeSet>
 
 </databaseChangeLog>

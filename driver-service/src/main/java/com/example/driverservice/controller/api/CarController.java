@@ -1,8 +1,9 @@
 package com.example.driverservice.controller.api;
 
-import com.example.driverservice.dto.request.CarRequestDto;
-import com.example.driverservice.dto.response.AllCarsResponseDto;
-import com.example.driverservice.dto.response.CarResponseDto;
+import com.example.driverservice.dto.request.CarRequest;
+import com.example.driverservice.dto.request.UpdateCarRequest;
+import com.example.driverservice.dto.response.AllCarsResponse;
+import com.example.driverservice.dto.response.CarResponse;
 import com.example.driverservice.service.CarService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,39 +29,40 @@ import static com.example.driverservice.util.ApiRoutesConstants.*;
 @RequestMapping(PUBLIC_API_V1)
 @RequiredArgsConstructor
 public class CarController {
+
     private final CarService carService;
 
     @PostMapping("/drivers/{driverExternalId}/cars")
     @ResponseStatus(HttpStatus.OK)
-    public CarResponseDto createCar(@PathVariable UUID driverExternalId,
-                                    @RequestBody @Valid CarRequestDto carRequest) {
+    public CarResponse createCar(@PathVariable UUID driverExternalId,
+                                 @RequestBody @Valid CarRequest carRequest) {
         return carService.createCar(driverExternalId, carRequest);
     }
 
     @GetMapping("/cars/{externalId}")
     @ResponseStatus(HttpStatus.OK)
-    public CarResponseDto findCarByExternalId(@PathVariable UUID externalId) {
+    public CarResponse findCarByExternalId(@PathVariable UUID externalId) {
         return carService.findByExternalId(externalId);
     }
 
     @GetMapping("/cars")
     @ResponseStatus(HttpStatus.OK)
-    public AllCarsResponseDto findAllCars(
+    public AllCarsResponse findAllCars(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return carService.findAllCars(pageable);
     }
 
     @PutMapping("/drivers/{driverExternalId}/cars")
     @ResponseStatus(HttpStatus.OK)
-    public CarResponseDto updateDriverCar(@PathVariable UUID driverExternalId,
-                                          @RequestBody @Valid CarRequestDto carRequestDto) {
-        return carService.updateDriverCar(driverExternalId, carRequestDto);
+    public CarResponse updateDriverCar(@PathVariable UUID driverExternalId,
+                                       @RequestBody @Valid UpdateCarRequest updateCarRequest) {
+        return carService.updateDriverCar(driverExternalId, updateCarRequest);
     }
 
     @DeleteMapping("/drivers/{driverExternalId}/cars/{carExternalId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteDriverCar(@PathVariable UUID driverExternalId,
-                                @PathVariable UUID carExternalId){
+                                @PathVariable UUID carExternalId) {
         carService.deleteDriverCar(driverExternalId, carExternalId);
     }
 

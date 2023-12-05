@@ -1,5 +1,6 @@
 package com.example.ridesservice.service.impl;
 
+import com.example.ridesservice.amqp.handler.SendRequestHandler;
 import com.example.ridesservice.dto.request.CreateRideRequest;
 import com.example.ridesservice.dto.response.PaymentInfoResponse;
 import com.example.ridesservice.dto.response.ride.*;
@@ -8,13 +9,16 @@ import com.example.ridesservice.exception.PassengerRideNotFoundException;
 import com.example.ridesservice.mapper.RideMapper;
 import com.example.ridesservice.model.Ride;
 import com.example.ridesservice.model.enums.DriverStatus;
+import com.example.ridesservice.model.enums.RideStatus;
 import com.example.ridesservice.model.projection.RideView;
 import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.service.RideService;
+import com.example.ridesservice.util.DataComposerUtils;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +30,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -39,7 +44,9 @@ public class RideServiceImpl implements RideService {
     private final DriverInfoRepository driverInfoRepo;
     private final RideMapper rideMapper;
     private final WebClient webClient;
+    private final SendRequestHandler sendRequestHandler;
     private final RideVerifier rideVerifier;
+    private final DataComposerUtils dataComposerUtils;
     @Value("${app.routes.passengers.get-payment-method}")
     private String passengersGetPaymentMethodUri;
     @Value("${app.api.web-client.max-retry-attempts}")
@@ -62,7 +69,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public AllRidesResponse findAllPassengerRides(UUID passengerExternalId, Pageable pageable) {
         Page<RideView> allPassengerRidesViews = rideRepo.findByPassengerExternalId(passengerExternalId, pageable);
-        return buildAllRidesDto(allPassengerRidesViews);
+        return dataComposerUtils.buildAllRidesDto(allPassengerRidesViews);
     }
 
     @Transactional
@@ -71,7 +78,7 @@ public class RideServiceImpl implements RideService {
         var rideCost = calculateRideCost(createRideDto);
         var ride = rideMapper.toRide(createRideDto, passengerExternalId, rideCost);
 
-        //notification drivers via Kafka
+        sendRequestHandler.sendRideInfoRequestToKafka(dataComposerUtils.buildRideInfoMessage(ride));
 
         rideRepo.save(ride);
 
@@ -88,16 +95,14 @@ public class RideServiceImpl implements RideService {
         var driver = driverInfoRepo.findByExternalId(driverExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(DRIVER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(driverExternalId)));
 
-        if (DriverStatus.UNAVAILABLE.equals(driver.getDriverStatus())) {
+        if (ObjectUtils.notEqual(DriverStatus.AVAILABLE, driver.getDriverStatus())) {
             throw new DriverAlreadyInUseException(DRIVER_ALREADY_IN_USE_EXCEPTION_MESSAGE.formatted(driverExternalId));
         }
 
         rideMapper.updateRideOnAcceptance(driver, ride);
 
         driver.addRide(ride);
-        driver.setDriverStatus(DriverStatus.UNAVAILABLE);
-
-        //change driverStatus in drivers-service via Kafka
+        driver.setDriverStatus(DriverStatus.TOWARDS_PASSENGER);
 
         return rideMapper.toAcceptRideDto(ride);
     }
@@ -109,11 +114,9 @@ public class RideServiceImpl implements RideService {
                 .orElseThrow(() -> new EntityNotFoundException(RIDE_NOT_FOUND_EXCEPTION_MESSAGE.formatted(rideExternalId)));
         rideVerifier.verifyStartPossibility(ride, driverExternalId);
 
-        var updatedRide = rideMapper.updateRideOnStarted(ride);
+        initiateRideStartActions(ride);
 
-        rideRepo.save(updatedRide);
-
-        //change driverStatus in drivers-service via Kafka
+        sendRequestHandler.sendDriverStatusRequestToKafka(dataComposerUtils.buildDriverStatusMessage(ride.getDriver()));
 
         return rideMapper.toStartRideDto(ride);
     }
@@ -125,23 +128,26 @@ public class RideServiceImpl implements RideService {
                 .orElseThrow(() -> new EntityNotFoundException(RIDE_NOT_FOUND_EXCEPTION_MESSAGE.formatted(rideExternalId)));
         rideVerifier.verifyFinishPossibility(ride, driverExternalId);
 
-        UUID passengerExternalId = ride.getPassengerExternalId();
-
-        PaymentInfoResponse paymentInfo = webClient.get()
-                .uri(passengersGetPaymentMethodUri, passengerExternalId)
-                .exchangeToMono(this::getPaymentInfoResponse)
-                .retryWhen(Retry.fixedDelay(maxRetryAttempts, Duration.ofMillis(delayMillis)))
-                .block();
+        PaymentInfoResponse paymentInfo = requestPassengerPaymentInfo(ride.getPassengerExternalId());
 
         //async call to payment microservice to provide payment for the ride
 
         rideMapper.updateRideOnFinish(Objects.requireNonNull(paymentInfo).paymentMethod(), ride);
 
-        ride.getDriver().setDriverStatus(DriverStatus.AVAILABLE);
+        var driver = ride.getDriver();
+        driver.setDriverStatus(DriverStatus.AVAILABLE);
 
-        //change driverStatus in drivers-service via Kafka
+        sendRequestHandler.sendDriverStatusRequestToKafka(dataComposerUtils.buildDriverStatusMessage(driver));
 
         return rideMapper.toFinishRideResponse(ride);
+    }
+
+    private PaymentInfoResponse requestPassengerPaymentInfo(UUID passengerExternalId) {
+        return webClient.get()
+                .uri(passengersGetPaymentMethodUri, passengerExternalId)
+                .exchangeToMono(this::getPaymentInfoResponse)
+                .retryWhen(Retry.fixedDelay(maxRetryAttempts, Duration.ofMillis(delayMillis)))
+                .block();
     }
 
     private Mono<PaymentInfoResponse> getPaymentInfoResponse(ClientResponse clientResponse) {
@@ -164,12 +170,9 @@ public class RideServiceImpl implements RideService {
         return pickUpAddress.concat(destinationAddress).length() * Math.random() * 3;
     }
 
-    private AllRidesResponse buildAllRidesDto(Page<RideView> allPassengerRidesViews) {
-        return AllRidesResponse.builder()
-                .rideViewList(allPassengerRidesViews.getContent())
-                .currentPageNumber(allPassengerRidesViews.getNumber())
-                .totalPages(allPassengerRidesViews.getTotalPages())
-                .totalElements(allPassengerRidesViews.getTotalElements())
-                .build();
+    private void initiateRideStartActions(Ride ride) {
+        ride.setRideStartedAt(LocalTime.now());
+        ride.setRideStatus(RideStatus.STARTED);
+        ride.getDriver().setDriverStatus(DriverStatus.UNAVAILABLE);
     }
 }

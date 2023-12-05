@@ -1,7 +1,9 @@
 package com.example.driverservice.mapper;
 
-import com.example.driverservice.dto.request.CarRequestDto;
-import com.example.driverservice.dto.response.CarResponseDto;
+import com.example.driverservice.amqp.message.CarInfoMessage;
+import com.example.driverservice.dto.request.CarRequest;
+import com.example.driverservice.dto.request.UpdateCarRequest;
+import com.example.driverservice.dto.response.CarResponse;
 import com.example.driverservice.model.entity.Car;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -19,12 +21,17 @@ import org.mapstruct.Builder;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface CarMapper {
-
-    CarResponseDto toDto(Car car);
+    CarResponse toDto(Car car);
 
     @Mapping(target = "externalId", expression = "java(java.util.UUID.randomUUID())")
-    Car toCar(CarRequestDto carRequest);
+    Car toCar(CarRequest carRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateCar(CarRequestDto carRequestDto, @MappingTarget Car car);
+    void updateCar(UpdateCarRequest carRequestDto, @MappingTarget Car car);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "carLicensePlate", source = "licensePlate")
+    @Mapping(target = "carModel", source = "model")
+    @Mapping(target = "carColor", source = "color")
+    CarInfoMessage toMessage(Car car);
 }

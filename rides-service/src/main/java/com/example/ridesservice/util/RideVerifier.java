@@ -1,6 +1,10 @@
 package com.example.ridesservice.util;
 
-import com.example.ridesservice.exception.*;
+import com.example.ridesservice.exception.DriverNotBelongRideException;
+import com.example.ridesservice.exception.RideNotAcceptedException;
+import com.example.ridesservice.exception.RideAlreadyStartedExceptionMessage;
+import com.example.ridesservice.exception.RideAlreadyFinishedExceptionMessage;
+import com.example.ridesservice.exception.RideNotStartedExceptionMessage;
 import com.example.ridesservice.model.Ride;
 import com.example.ridesservice.model.enums.RideStatus;
 import org.apache.commons.lang3.ObjectUtils;

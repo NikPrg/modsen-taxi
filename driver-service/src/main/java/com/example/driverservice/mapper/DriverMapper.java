@@ -1,8 +1,9 @@
 package com.example.driverservice.mapper;
 
-import com.example.driverservice.dto.request.DriverRequestDto;
-import com.example.driverservice.dto.response.CreateDriverResponseDto;
-import com.example.driverservice.dto.response.DriverResponseDto;
+import com.example.driverservice.dto.request.DriverRequest;
+import com.example.driverservice.dto.request.UpdateDriverRequest;
+import com.example.driverservice.dto.response.CreateDriverResponse;
+import com.example.driverservice.dto.response.DriverResponse;
 import com.example.driverservice.model.entity.Driver;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
@@ -23,14 +24,15 @@ import org.mapstruct.Builder;
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface DriverMapper {
-    CreateDriverResponseDto toCreateDto(Driver driver);
+    CreateDriverResponse toCreateDto(Driver driver);
 
     @Mapping(target = "externalId", expression = "java(java.util.UUID.randomUUID())")
     @Mapping(target = "rate", constant = "5.0")
-    Driver toDriver(DriverRequestDto createDriverRequestDto);
+    Driver toDriver(DriverRequest createDriverRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateDriver(DriverRequestDto driverRequestDto, @MappingTarget Driver storedDriver);
+    @Mapping(target = "driverStatus", constant = "NO_CAR")
+    void updateDriver(UpdateDriverRequest driverRequest, @MappingTarget Driver storedDriver);
 
-    DriverResponseDto toDto(Driver driver);
+    DriverResponse toDto(Driver driver);
 }

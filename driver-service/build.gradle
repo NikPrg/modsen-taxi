@@ -25,15 +25,20 @@ ext {
     mapstructVersion = "1.5.5.Final"
     lombokVersion = "1.18.30"
     lombokMapstructBindingVersion = "0.2.0"
+    springIntegrationVersion = "6.2.0"
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-integration'
+    implementation "org.springframework.integration:spring-integration-kafka:${springIntegrationVersion}"
+    implementation "org.springframework.integration:spring-integration-http:${springIntegrationVersion}"
     implementation 'org.liquibase:liquibase-core'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
@@ -41,6 +46,8 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.integration:spring-integration-test'
 }
 
 tasks.named('bootBuildImage') {

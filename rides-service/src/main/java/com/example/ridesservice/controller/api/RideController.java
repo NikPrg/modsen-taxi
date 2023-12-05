@@ -10,8 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +26,7 @@ import static com.example.ridesservice.util.ApiRoutesConstants.*;
 @RequestMapping(PUBLIC_API_V1_RIDES)
 @RequiredArgsConstructor
 public class RideController {
+
     private final RideService rideService;
 
     @GetMapping("{rideExternalId}/passengers/{passengerExternalId}")
@@ -54,11 +55,12 @@ public class RideController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public AcceptRideResponse acceptRide(@PathVariable UUID driverExternalId,
                                          @PathVariable UUID rideExternalId) {
+
         return rideService.acceptRide(driverExternalId, rideExternalId);
     }
 
     @PatchMapping("{rideExternalId}/drivers/{driverExternalId}/start")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public StartRideResponse startRide(@PathVariable UUID driverExternalId,
                                        @PathVariable UUID rideExternalId) {
         return rideService.startRide(driverExternalId, rideExternalId);

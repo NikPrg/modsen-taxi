@@ -23,5 +23,28 @@ spring:
         format_sql: false
         show_sql: false
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: driver-service-group
+
   messages:
     basename: messages-constants
+
+app:
+  api:
+    web-client:
+      connection-timeout-in-ms: 1000
+
+  kafka:
+    topic:
+      driver-info-events: driver-info-events
+      ride-info-events: ride-info-events
+      driver-status-events: driver-status-events
+
+  routes:
+    rides:
+      accept-ride-method: http://localhost:8082/public/api/v1/rides/{rideExternalId}/drivers/{driverExternalId}/accept

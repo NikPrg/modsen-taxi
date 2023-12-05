@@ -1,9 +1,10 @@
 package com.example.driverservice.controller.api;
 
-import com.example.driverservice.dto.request.DriverRequestDto;
-import com.example.driverservice.dto.response.AllDriversResponseDto;
-import com.example.driverservice.dto.response.CreateDriverResponseDto;
-import com.example.driverservice.dto.response.DriverResponseDto;
+import com.example.driverservice.dto.request.DriverRequest;
+import com.example.driverservice.dto.request.UpdateDriverRequest;
+import com.example.driverservice.dto.response.AllDriversResponse;
+import com.example.driverservice.dto.response.CreateDriverResponse;
+import com.example.driverservice.dto.response.DriverResponse;
 import com.example.driverservice.service.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,32 +31,33 @@ import static com.example.driverservice.util.ApiRoutesConstants.*;
 @RequestMapping(PUBLIC_API_V1_DRIVERS)
 @RequiredArgsConstructor
 public class DriverController {
+
     private final DriverService driverService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreateDriverResponseDto createDriver(@RequestBody @Valid DriverRequestDto createDriverRequestDto) {
-        return driverService.createDriver(createDriverRequestDto);
+    public CreateDriverResponse createDriver(@RequestBody @Valid DriverRequest createDriverRequest) {
+        return driverService.createDriver(createDriverRequest);
     }
 
     @GetMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
-    public DriverResponseDto findDriverByExternalId(@PathVariable UUID externalId) {
+    public DriverResponse findDriverByExternalId(@PathVariable UUID externalId) {
         return driverService.findDriverByExternalId(externalId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public AllDriversResponseDto findAllDrivers(
+    public AllDriversResponse findAllDrivers(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return driverService.findAllDrivers(pageable);
     }
 
     @PutMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
-    public DriverResponseDto updateDriver(@PathVariable UUID externalId,
-                                          @RequestBody @Valid DriverRequestDto driverRequestDto) {
-        return driverService.updateDriver(externalId, driverRequestDto);
+    public DriverResponse updateDriver(@PathVariable UUID externalId,
+                                       @RequestBody @Valid UpdateDriverRequest updateDriverRequest) {
+        return driverService.updateDriver(externalId, updateDriverRequest);
     }
 
     @DeleteMapping("{externalId}")

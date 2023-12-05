@@ -1,6 +1,10 @@
 package com.example.ridesservice.model.enums;
 
 public enum DriverStatus {
+    CREATED,
+    NO_CAR,
     AVAILABLE,
-    UNAVAILABLE
+    TOWARDS_PASSENGER,
+    UNAVAILABLE,
+    DELETED
 }

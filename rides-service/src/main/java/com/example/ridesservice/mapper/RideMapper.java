@@ -1,7 +1,12 @@
 package com.example.ridesservice.mapper;
 
 import com.example.ridesservice.dto.request.CreateRideRequest;
-import com.example.ridesservice.dto.response.ride.*;
+
+import com.example.ridesservice.dto.response.ride.AcceptRideResponse;
+import com.example.ridesservice.dto.response.ride.CreateRideResponse;
+import com.example.ridesservice.dto.response.ride.FinishRideResponse;
+import com.example.ridesservice.dto.response.ride.GetRideResponse;
+import com.example.ridesservice.dto.response.ride.StartRideResponse;
 import com.example.ridesservice.model.DriverInfo;
 import com.example.ridesservice.model.Ride;
 import com.example.ridesservice.model.enums.PaymentMethod;
@@ -42,13 +47,6 @@ public interface RideMapper {
     @Mapping(target = "externalId", ignore = true)
     @Mapping(target = "rideStatus", constant = "ACCEPTED")
     void updateRideOnAcceptance(DriverInfo driver, @MappingTarget Ride ride);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "externalId", ignore = true)
-    @Mapping(target = "rideStatus", constant = "STARTED")
-    @Mapping(target = "rideStartedAt", expression = "java(java.time.LocalTime.now())")
-    Ride updateRideOnStarted(Ride ride);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
