@@ -4,7 +4,7 @@ import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
-import com.example.passengerservice.dto.response.PassengerResponseDto;
+import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.exception.CardNotBelongPassengerException;
 import com.example.passengerservice.mapper.PassengerMapper;
@@ -45,7 +45,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponseDto findPassengerByExternalId(UUID externalId) {
+    public PassengerResponse findPassengerByExternalId(UUID externalId) {
         val passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         return passengerMapper.toDto(passenger);
@@ -66,7 +66,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Transactional
     @Override
-    public PassengerResponseDto update(UUID externalId, PassengerRequestDto passengerDto) {
+    public PassengerResponse update(UUID externalId, PassengerRequestDto passengerDto) {
         var passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         passengerMapper.updatePassenger(passengerDto, passenger);

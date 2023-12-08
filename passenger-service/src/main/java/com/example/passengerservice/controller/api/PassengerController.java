@@ -1,12 +1,12 @@
 package com.example.passengerservice.controller.api;
 
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
+import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
-import com.example.passengerservice.dto.response.PassengerResponseDto;
 import com.example.passengerservice.service.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class PassengerController {
 
     @GetMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
-    public PassengerResponseDto findPassengerByExternalId(@PathVariable UUID externalId) {
+    public PassengerResponse findPassengerByExternalId(@PathVariable UUID externalId) {
         return passengerService.findPassengerByExternalId(externalId);
     }
 
@@ -65,8 +65,8 @@ public class PassengerController {
 
     @PutMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
-    public PassengerResponseDto updatePassenger(@PathVariable UUID externalId,
-                                                @RequestBody @Valid PassengerRequestDto dto) {
+    public PassengerResponse updatePassenger(@PathVariable UUID externalId,
+                                             @RequestBody @Valid PassengerRequestDto dto) {
         return passengerService.update(externalId, dto);
     }
 

@@ -4,7 +4,7 @@ import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
-import com.example.passengerservice.dto.response.PassengerResponseDto;
+import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
 import com.example.passengerservice.model.projections.PassengerView;
 import org.springframework.data.domain.Page;
@@ -16,13 +16,13 @@ public interface PassengerService {
 
     CreatePassengerResponse signUp(PassengerRegistrationDto passengerDto);
 
-    PassengerResponseDto findPassengerByExternalId(UUID externalId);
+    PassengerResponse findPassengerByExternalId(UUID externalId);
 
     PaymentInfoResponse findPassengerPaymentInfo(UUID externalId);
 
     Page<PassengerView> findAllPassengers(Pageable pageable);
 
-    PassengerResponseDto update(UUID externalId, PassengerRequestDto passengerDto);
+    PassengerResponse update(UUID externalId, PassengerRequestDto passengerDto);
 
     void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId);
 
