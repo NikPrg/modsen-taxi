@@ -18,7 +18,6 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.DefaultKafkaHeaderMapper;
-import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.messaging.MessageChannel;
 
@@ -29,7 +28,6 @@ public class KafkaProducerConfig {
     private static final String CARD_INFO_KAFKA_CHANNEL = "cardInfoKafkaChannel";
     private static final String CREATE_PASSENGER_INFO_KAFKA_CHANNEL = "createPassengerInfoKafkaChannel";
     private static final String REMOVE_PASSENGER_INFO_CHANNEL = "removePassengerInfoKafkaChannel";
-    private static final String TOPIC_EXPRESSION = "headers[kafka_topic] ?: '%s'";
 
     @Value("${app.kafka.topic.card-default-status-details}")
     private String cardDefaultStatusDetailsTopic;

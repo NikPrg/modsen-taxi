@@ -1,6 +1,5 @@
 package com.example.passengerservice.amqp.channelGateway;
 
-
 import com.example.passengerservice.amqp.handler.SendRequestHandler;
 import com.example.passengerservice.amqp.message.ChangeCardUsedAsDefaultMessage;
 import com.example.passengerservice.amqp.message.NewPassengerInfoMessage;

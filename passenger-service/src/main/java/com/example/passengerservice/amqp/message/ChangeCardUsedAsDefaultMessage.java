@@ -1,6 +1,6 @@
 package com.example.passengerservice.amqp.message;
 
-import com.example.passengerservice.model.PaymentMethod;
+import com.example.passengerservice.model.enums.PaymentMethod;
 import jakarta.annotation.Nullable;
 import lombok.Builder;
 

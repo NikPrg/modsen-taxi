@@ -11,7 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface PassengerInfoRepository extends JpaRepository<PassengerInfo, Long> {
-
     Optional<PassengerInfo> findByExternalId(UUID externalId);
 
     @Query("SELECT p FROM PassengerInfo p LEFT JOIN FETCH p.cards c LEFT JOIN FETCH c.card WHERE p.externalId = :externalId")

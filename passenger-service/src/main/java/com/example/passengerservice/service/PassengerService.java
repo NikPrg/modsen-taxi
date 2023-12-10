@@ -4,11 +4,10 @@ import com.example.passengerservice.amqp.message.ChangeDefaultPaymentMethodMessa
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
+import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
-import com.example.passengerservice.model.projections.PassengerView;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
@@ -21,7 +20,7 @@ public interface PassengerService {
 
     PaymentInfoResponse findPassengerPaymentInfo(UUID externalId);
 
-    Page<PassengerView> findAllPassengers(Pageable pageable);
+    AllPassengersResponse findAllPassengers(Pageable pageable);
 
     PassengerResponse update(UUID externalId, PassengerRequestDto passengerDto);
 

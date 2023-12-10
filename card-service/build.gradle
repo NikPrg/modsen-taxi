@@ -36,6 +36,7 @@ dependencies {
     implementation "org.springframework.integration:spring-integration-kafka:${springIntegrationVersion}"
     implementation "org.springframework.integration:spring-integration-http:${springIntegrationVersion}"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation 'org.liquibase:liquibase-core'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
 
@@ -48,7 +49,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.integration:spring-integration-test'
 }
-
 
 tasks.named('test') {
     useJUnitPlatform()

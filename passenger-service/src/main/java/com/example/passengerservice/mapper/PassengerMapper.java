@@ -19,7 +19,6 @@ import org.mapstruct.ReportingPolicy;
         componentModel = "spring",
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
         builder = @Builder(disableBuilder = true),
-        uses = {PassengerCardMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface PassengerMapper {

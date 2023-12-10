@@ -1,7 +1,12 @@
 package com.example.cardservice.model;
 
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.EqualsAndHashCode;
+
 
 import java.io.Serializable;
 

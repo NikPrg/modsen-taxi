@@ -1,0 +1,15 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v3-1-drop-passengers-cards-table" author="Nikita Przhevalski">
+        <dropAllForeignKeyConstraints baseTableName="passengers_cards"/>
+        <dropTable tableName="passengers_cards"/>
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v2/sql/v3-create-passengers-cards-table.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

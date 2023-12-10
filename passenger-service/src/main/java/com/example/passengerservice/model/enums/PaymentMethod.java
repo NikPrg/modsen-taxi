@@ -1,4 +1,4 @@
-package com.example.passengerservice.model;
+package com.example.passengerservice.model.enums;
 
 import lombok.Getter;
 

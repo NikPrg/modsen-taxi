@@ -1,0 +1,40 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-3-create-passenger-card-table" author="Nikita Przhevalski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="passengers_cards"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="passengers_cards">
+            <column name="passenger_id" type="bigint">
+                <constraints foreignKeyName="passenger-fk"
+                             referencedTableName="passengers_info"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="card_id" type="bigint">
+                <constraints foreignKeyName="card-fk"
+                             referencedTableName="cards"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="used_as_default" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="passengers_cards"
+                       columnNames="card_id, passenger_id"
+                       constraintName="pk_passenger_card"/>
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v1/sql/v1-drop-passenger-card-table.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
