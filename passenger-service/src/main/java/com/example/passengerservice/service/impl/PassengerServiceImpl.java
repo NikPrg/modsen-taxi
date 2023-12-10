@@ -1,5 +1,10 @@
 package com.example.passengerservice.service.impl;
 
+import com.example.passengerservice.amqp.handler.SendRequestHandler;
+import com.example.passengerservice.amqp.message.ChangeCardUsedAsDefaultMessage;
+import com.example.passengerservice.amqp.message.ChangeDefaultPaymentMethodMessage;
+import com.example.passengerservice.amqp.message.NewPassengerInfoMessage;
+import com.example.passengerservice.amqp.message.RemovePassengerInfoMessage;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
@@ -21,9 +26,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static com.example.passengerservice.util.ExceptionMessagesConstants.*;
@@ -31,9 +38,12 @@ import static com.example.passengerservice.util.ExceptionMessagesConstants.*;
 @Service
 @RequiredArgsConstructor
 public class PassengerServiceImpl implements PassengerService {
+
     private final PassengerMapper passengerMapper;
     private final PassengerRepository passengerRepo;
+    private final SendRequestHandler sendRequestHandler;
     private final CardRepository cardRepo;
+
 
     @Transactional
     @Override
@@ -41,7 +51,14 @@ public class PassengerServiceImpl implements PassengerService {
         checkPhoneForUniqueness(passengerDto.phone());
         val passenger = passengerMapper.toPassenger(passengerDto);
         passengerRepo.save(passenger);
+        sendRequestHandler.sendNewPassengerToKafka(buildNewPassengerInfoMessage(passenger));
         return passengerMapper.toCreateDto(passenger);
+    }
+
+    private NewPassengerInfoMessage buildNewPassengerInfoMessage(Passenger passenger) {
+        return NewPassengerInfoMessage.builder()
+                .passengerExternalId(passenger.getExternalId())
+                .build();
     }
 
     @Override
@@ -87,17 +104,30 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Transactional
     @Override
+    public void updateDefaultPaymentMethod(ChangeDefaultPaymentMethodMessage message) {
+        UUID passengerExternalId = message.passengerExternalId();
+        var passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+        passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
+    }
+
+    @Transactional
+    @Override
     public void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId) {
-        var passenger = passengerRepo.findByExternalIdFetch(passengerExternalId)
+        var passenger = passengerRepo.findByExternalId(passengerExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
-        var card = cardRepo.findByExternalId(cardExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(cardExternalId)));
+        var message = ChangeCardUsedAsDefaultMessage.builder()
+                .passengerExternalId(passengerExternalId)
+                .cardExternalId(cardExternalId)
+                .paymentMethod(PaymentMethod.CARD)
+                .build();
 
-        addCardIfPassengerBelong(passenger, card);
+        sendRequestHandler.sendCardUsedAsDefaultChangeRequestToKafka(message);
 
-        passengerRepo.save(passenger);
+        passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
     }
+
 
     @Transactional
     @Override
@@ -105,12 +135,16 @@ public class PassengerServiceImpl implements PassengerService {
         var passenger = passengerRepo.findByExternalIdFetch(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
 
-        passenger.getCards().forEach(passCard -> passCard.setUsedAsDefault(false));
+        var message = ChangeCardUsedAsDefaultMessage.builder()
+                .passengerExternalId(externalId)
+                .paymentMethod(PaymentMethod.CASH)
+                .build();
+
+        sendRequestHandler.sendCardUsedAsDefaultChangeRequestToKafka(message);
 
         passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
-
-        passengerRepo.save(passenger);
     }
+
 
     @Transactional
     @Override
@@ -118,7 +152,15 @@ public class PassengerServiceImpl implements PassengerService {
         var passenger = passengerRepo.findByExternalIdFetch(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
 
+        sendRequestHandler.sendPassengerRemovalToKafka(buildRemovePassengerInfoMessage(passenger));
+
         passengerRepo.delete(passenger);
+    }
+
+    private RemovePassengerInfoMessage buildRemovePassengerInfoMessage(Passenger passenger){
+        return RemovePassengerInfoMessage.builder()
+                .passengerExternalId(passenger.getExternalId())
+                .build();
     }
 
     private void addCardIfPassengerBelong(Passenger passenger, Card card) {

@@ -1,6 +1,7 @@
 package com.example.cardservice.repository;
 
 import com.example.cardservice.model.Card;
+import com.example.cardservice.model.PassengerCard;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,17 +15,17 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     @Query("SELECT c FROM Card c JOIN FETCH c.passengers p JOIN FETCH p.passenger WHERE c.externalId = :externalId")
     Optional<Card> findByExternalId(UUID externalId);
 
-    @Query("SELECT c FROM Card c JOIN FETCH c.passengers p JOIN FETCH p.passenger WHERE c.number = :number")
+    @Query("SELECT c FROM Card c LEFT JOIN FETCH c.passengers p LEFT JOIN FETCH p.passenger WHERE c.number = :number")
     Optional<Card> findByNumber(String number);
 
     @Query(value = """
                        
-            SELECT c
+            SELECT COUNT(c) > 0
             FROM Card c
-            JOIN FETCH c.passengers pc
+            JOIN  c.passengers pc
             WHERE pc.passenger.externalId = :passengerExternalId AND c.externalId = :cardExternalId
                        
             """)
-    Optional<Card> existsCardForPassenger(@Param("cardExternalId") UUID cardExternalId, @Param("passengerExternalId") UUID passengerExternalId);
+    boolean existsCardForPassenger(@Param("cardExternalId") UUID cardExternalId, @Param("passengerExternalId") UUID passengerExternalId);
 
 }

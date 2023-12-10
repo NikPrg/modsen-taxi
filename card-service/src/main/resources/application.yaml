@@ -24,18 +24,25 @@ spring:
         format_sql: true
         show_sql: true
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: card-service-group
+
   messages:
     basename: messages-constants
 
 
 app:
-  api:
-    feign-client:
-      passenger:
-        name: passenger-service
-        url: localhost:8080/public/api/v1/
-        endpoints:
-          findByExternalId: passengers/{externalId}
+  kafka:
+    topic:
+      payment-method-details: payment-method-details
+      card-default-status-details: card-default-status-details
+      new-passenger-details: new-passenger-details
+      removed-passenger-details: removed-passenger-details
 
 
 

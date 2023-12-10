@@ -1,5 +1,6 @@
 package com.example.passengerservice.service;
 
+import com.example.passengerservice.amqp.message.ChangeDefaultPaymentMethodMessage;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
@@ -31,5 +32,7 @@ public interface PassengerService {
     void delete(UUID externalId);
 
     void updatePassengerPhone(UUID externalId, ChangePhoneRequest changePhoneRequest);
+
+    void updateDefaultPaymentMethod(ChangeDefaultPaymentMethodMessage message);
 
 }

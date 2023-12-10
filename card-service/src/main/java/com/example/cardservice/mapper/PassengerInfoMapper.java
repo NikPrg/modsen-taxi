@@ -1,6 +1,6 @@
 package com.example.cardservice.mapper;
 
-import com.example.cardservice.dto.response.PassengerResponse;
+import com.example.cardservice.amqp.message.NewPassengerInfoMessage;
 import com.example.cardservice.model.PassengerInfo;
 import org.mapstruct.*;
 
@@ -13,6 +13,7 @@ import org.mapstruct.*;
 public interface PassengerInfoMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
-    PassengerInfo toPassengerInfo(PassengerResponse passengerResponse);
+    @Mapping(target = "externalId", source = "passengerExternalId")
+    PassengerInfo toPassengerInfo(NewPassengerInfoMessage message);
 
 }

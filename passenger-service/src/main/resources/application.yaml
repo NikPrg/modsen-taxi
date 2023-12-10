@@ -24,8 +24,24 @@ spring:
         format_sql: false
         show_sql: false
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: passenger-service-group
+
   messages:
     basename: messages-constants
+
+app:
+  kafka:
+    topic:
+      payment-method-details: payment-method-details
+      card-default-status-details: card-default-status-details
+      new-passenger-details: new-passenger-details
+      removed-passenger-details: removed-passenger-details
 
 logging:
   level:

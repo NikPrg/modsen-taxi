@@ -29,4 +29,5 @@ public class Card {
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<PassengerCard> passengers = new ArrayList<>();
+
 }
