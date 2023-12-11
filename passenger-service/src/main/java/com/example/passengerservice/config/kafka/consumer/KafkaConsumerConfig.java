@@ -1,6 +1,7 @@
 package com.example.passengerservice.config.kafka.consumer;
 
 import com.example.passengerservice.amqp.message.ChangeDefaultPaymentMethodMessage;
+import com.example.passengerservice.amqp.message.ErrorInfoMessage;
 import com.example.passengerservice.service.PassengerService;
 import com.example.passengerservice.util.KafkaUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,20 @@ public class KafkaConsumerConfig {
     @Value("${app.kafka.topic.payment-method-details}")
     private String paymentMethodDetailsTopic;
 
+    @Value("${app.kafka.topic.error-card-details}")
+    private String errorCardDetailsTopic;
+
     @Bean
     public IntegrationFlow consumePaymentMethodInfoFromKafka(ConsumerFactory<String, String> consumerFactory) {
         return IntegrationFlow.from(Kafka.messageDrivenChannelAdapter(consumerFactory, paymentMethodDetailsTopic))
                 .handle(passengerService, "updateDefaultPaymentMethod")
+                .get();
+    }
+
+    @Bean
+    public IntegrationFlow consumeErrorCardDetailsFromKafka(ConsumerFactory<String, String> consumerFactory) {
+        return IntegrationFlow.from(Kafka.messageDrivenChannelAdapter(consumerFactory, errorCardDetailsTopic))
+                .handle(passengerService, "resetDefaultPaymentMethod")
                 .get();
     }
 
@@ -42,7 +53,10 @@ public class KafkaConsumerConfig {
     @Bean
     public Map<String, Object> consumerConfigs(KafkaProperties kafkaProperties) {
         Map<String, Object> consumerProperties = kafkaProperties.buildConsumerProperties();
-        String typeMappings = KafkaUtils.buildTypeMappings(ChangeDefaultPaymentMethodMessage.class);
+        String typeMappings = KafkaUtils.buildTypeMappings(
+                ChangeDefaultPaymentMethodMessage.class,
+                ErrorInfoMessage.class
+        );
 
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);

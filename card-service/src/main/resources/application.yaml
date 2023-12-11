@@ -42,6 +42,7 @@ app:
       card-default-status-details: card-default-status-details
       new-passenger-details: new-passenger-details
       removed-passenger-details: removed-passenger-details
+      error-card-details: error-card-details
 
 logging:
   level:

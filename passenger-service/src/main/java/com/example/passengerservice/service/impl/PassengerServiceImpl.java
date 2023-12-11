@@ -1,10 +1,7 @@
 package com.example.passengerservice.service.impl;
 
 import com.example.passengerservice.amqp.handler.SendRequestHandler;
-import com.example.passengerservice.amqp.message.ChangeCardUsedAsDefaultMessage;
-import com.example.passengerservice.amqp.message.ChangeDefaultPaymentMethodMessage;
-import com.example.passengerservice.amqp.message.NewPassengerInfoMessage;
-import com.example.passengerservice.amqp.message.RemovePassengerInfoMessage;
+import com.example.passengerservice.amqp.message.*;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
@@ -12,6 +9,7 @@ import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.exception.CardServiceIntegrationException;
 import com.example.passengerservice.mapper.PassengerMapper;
 import com.example.passengerservice.model.Passenger;
 import com.example.passengerservice.model.enums.PaymentMethod;
@@ -141,6 +139,17 @@ public class PassengerServiceImpl implements PassengerService {
         sendRequestHandler.sendPassengerRemovalToKafka(buildRemovePassengerInfoMessage(passenger));
 
         passengerRepo.delete(passenger);
+    }
+
+    @Override
+    public void resetDefaultPaymentMethod(ErrorInfoMessage message) {
+        UUID passengerExternalId = message.passengerExternalId();
+
+        passengerRepo.findByExternalId(passengerExternalId)
+                .ifPresent(passenger -> passenger.setDefaultPaymentMethod(PaymentMethod.CASH));
+
+        throw new CardServiceIntegrationException(message.exceptionMessage());
+
     }
 
     private void checkPhoneForUniqueness(String phone) {

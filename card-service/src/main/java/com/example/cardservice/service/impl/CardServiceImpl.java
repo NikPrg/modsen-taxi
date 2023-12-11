@@ -3,6 +3,7 @@ package com.example.cardservice.service.impl;
 import com.example.cardservice.amqp.handler.SendRequestHandler;
 import com.example.cardservice.amqp.message.ChangeCardUsedAsDefaultMessage;
 import com.example.cardservice.amqp.message.ChangeDefaultPaymentMethodMessage;
+import com.example.cardservice.amqp.message.ErrorInfoMessage;
 import com.example.cardservice.dto.request.CardRegistrationDto;
 import com.example.cardservice.dto.response.AllCardsResponse;
 import com.example.cardservice.dto.response.CreateCardResponse;
@@ -17,6 +18,7 @@ import com.example.cardservice.repository.PassengerInfoRepository;
 import com.example.cardservice.service.CardService;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,23 +71,28 @@ public class CardServiceImpl implements CardService {
         removePassengerCard(passengerInfo);
     }
 
+    @Retryable(noRetryFor = PassengerNotFoundException.class)
     @Transactional
     @Override
     public void setCardAsUsedDefault(ChangeCardUsedAsDefaultMessage message) {
         UUID passengerExternalId = message.passengerExternalId();
         UUID cardExternalId = message.cardExternalId();
 
-        var passengerInfo = passengerInfoRepo.findByExternalIdAndCardExternalId(passengerExternalId, cardExternalId)
-                .orElseThrow(() ->
-                        new PassengerNotFoundException(PASSENGER_WITH_SPECIFIED_CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId)));
-
         passengerInfoRepo.findByExternalIdFetch(passengerExternalId).stream()
                 .map(PassengerInfo::getCards)
                 .flatMap(Collection::stream)
                 .forEach(passengerCard -> passengerCard.setUsedAsDefault(false));
 
-        passengerInfo.getCards().get(0).setUsedAsDefault(true);
+        try {
+            var passengerInfo = passengerInfoRepo.findByExternalIdAndCardExternalId(passengerExternalId, cardExternalId)
+                    .orElseThrow(() ->
+                            new PassengerNotFoundException(PASSENGER_WITH_SPECIFIED_CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId)));
+            passengerInfo.getCards().get(0).setUsedAsDefault(true);
 
+        } catch (PassengerNotFoundException ex) {
+            sendRequestHandler.sendErrorInfoMessageToKafka(
+                    new ErrorInfoMessage(passengerExternalId, ex.getMessage()));
+        }
     }
 
     @Transactional
