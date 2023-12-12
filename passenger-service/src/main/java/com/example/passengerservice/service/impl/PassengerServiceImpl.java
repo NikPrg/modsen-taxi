@@ -1,19 +1,19 @@
 package com.example.passengerservice.service.impl;
 
+import com.example.passengerservice.amqp.handler.SendRequestHandler;
+import com.example.passengerservice.amqp.message.*;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
+import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
-import com.example.passengerservice.dto.response.PassengerResponseDto;
+import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
-import com.example.passengerservice.exception.CardNotBelongPassengerException;
+import com.example.passengerservice.exception.CardServiceIntegrationException;
 import com.example.passengerservice.mapper.PassengerMapper;
-import com.example.passengerservice.model.Card;
 import com.example.passengerservice.model.Passenger;
-import com.example.passengerservice.model.PassengerCard;
-import com.example.passengerservice.model.PaymentMethod;
+import com.example.passengerservice.model.enums.PaymentMethod;
 import com.example.passengerservice.model.projections.PassengerView;
-import com.example.passengerservice.repository.CardRepository;
 import com.example.passengerservice.repository.PassengerRepository;
 import com.example.passengerservice.service.PassengerService;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,9 +31,10 @@ import static com.example.passengerservice.util.ExceptionMessagesConstants.*;
 @Service
 @RequiredArgsConstructor
 public class PassengerServiceImpl implements PassengerService {
+
     private final PassengerMapper passengerMapper;
     private final PassengerRepository passengerRepo;
-    private final CardRepository cardRepo;
+    private final SendRequestHandler sendRequestHandler;
 
     @Transactional
     @Override
@@ -41,11 +42,12 @@ public class PassengerServiceImpl implements PassengerService {
         checkPhoneForUniqueness(passengerDto.phone());
         val passenger = passengerMapper.toPassenger(passengerDto);
         passengerRepo.save(passenger);
+        sendRequestHandler.sendNewPassengerToKafka(buildNewPassengerInfoMessage(passenger));
         return passengerMapper.toCreateDto(passenger);
     }
 
     @Override
-    public PassengerResponseDto findPassengerByExternalId(UUID externalId) {
+    public PassengerResponse findPassengerByExternalId(UUID externalId) {
         val passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         return passengerMapper.toDto(passenger);
@@ -53,20 +55,21 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Override
     public PaymentInfoResponse findPassengerPaymentInfo(UUID externalId) {
-        val passenger = passengerRepo.findByExternalIdFetch(externalId)
+        val passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         return passengerMapper.toPaymentInfoDto(passenger);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<PassengerView> findAllPassengers(Pageable pageable) {
-        return passengerRepo.findAllPassengersView(pageable);
+    public AllPassengersResponse findAllPassengers(Pageable pageable) {
+        Page<PassengerView> allPassengersViews = passengerRepo.findAllPassengersView(pageable);
+        return buildAllPassengersResponse(allPassengersViews);
     }
 
     @Transactional
     @Override
-    public PassengerResponseDto update(UUID externalId, PassengerRequestDto passengerDto) {
+    public PassengerResponse update(UUID externalId, PassengerRequestDto passengerDto) {
         var passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         passengerMapper.updatePassenger(passengerDto, passenger);
@@ -87,58 +90,92 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Transactional
     @Override
+    public void updateDefaultPaymentMethod(ChangeDefaultPaymentMethodMessage message) {
+        UUID passengerExternalId = message.passengerExternalId();
+        var passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+        passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
+    }
+
+    @Transactional
+    @Override
     public void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId) {
-        var passenger = passengerRepo.findByExternalIdFetch(passengerExternalId)
+        var passenger = passengerRepo.findByExternalId(passengerExternalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
-        var card = cardRepo.findByExternalId(cardExternalId)
-                .orElseThrow(() -> new EntityNotFoundException(CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(cardExternalId)));
+        var message = ChangeCardUsedAsDefaultMessage.builder()
+                .passengerExternalId(passengerExternalId)
+                .cardExternalId(cardExternalId)
+                .paymentMethod(PaymentMethod.CARD)
+                .build();
 
-        addCardIfPassengerBelong(passenger, card);
+        sendRequestHandler.sendCardUsedAsDefaultChangeRequestToKafka(message);
 
-        passengerRepo.save(passenger);
+        passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
     }
 
     @Transactional
     @Override
     public void addCashAsDefaultPaymentMethod(UUID externalId) {
-        var passenger = passengerRepo.findByExternalIdFetch(externalId)
+        var passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
 
-        passenger.getCards().forEach(passCard -> passCard.setUsedAsDefault(false));
+        var message = ChangeCardUsedAsDefaultMessage.builder()
+                .passengerExternalId(externalId)
+                .paymentMethod(PaymentMethod.CASH)
+                .build();
+
+        sendRequestHandler.sendCardUsedAsDefaultChangeRequestToKafka(message);
 
         passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
-
-        passengerRepo.save(passenger);
     }
 
     @Transactional
     @Override
     public void delete(UUID externalId) {
-        var passenger = passengerRepo.findByExternalIdFetch(externalId)
+        var passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
+
+        sendRequestHandler.sendPassengerRemovalToKafka(buildRemovePassengerInfoMessage(passenger));
 
         passengerRepo.delete(passenger);
     }
 
-    private void addCardIfPassengerBelong(Passenger passenger, Card card) {
-        PassengerCard passengerCard = card.getPassengers().stream()
-                .filter(passCard -> passCard.getPassenger().equals(passenger))
-                .findFirst()
-                .orElseThrow(() -> new CardNotBelongPassengerException(CARD_NOT_BELONG_PASSENGER_EXCEPTION_MESSAGE.formatted(card.getExternalId(), passenger.getExternalId())));
+    @Override
+    public void resetDefaultPaymentMethod(ErrorInfoMessage message) {
+        UUID passengerExternalId = message.passengerExternalId();
 
-        if (PaymentMethod.CASH.equals(passenger.getDefaultPaymentMethod())) {
-            passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
-            passengerCard.setUsedAsDefault(true);
-        } else {
-            passenger.getCards().forEach(passCard -> passCard.setUsedAsDefault(false));
-            passengerCard.setUsedAsDefault(true);
-        }
+        passengerRepo.findByExternalId(passengerExternalId)
+                .ifPresent(passenger -> passenger.setDefaultPaymentMethod(PaymentMethod.CASH));
+
+        throw new CardServiceIntegrationException(message.exceptionMessage());
+
     }
 
     private void checkPhoneForUniqueness(String phone) {
         if (passengerRepo.existsByPhone(phone)) {
             throw new IllegalArgumentException(USER_WITH_THE_SAME_PHONE_IS_EXISTS_MESSAGE.formatted(phone));
         }
+    }
+
+    private AllPassengersResponse buildAllPassengersResponse(Page<PassengerView> allPassengersViews) {
+        return AllPassengersResponse.builder()
+                .passengerViewList(allPassengersViews.getContent())
+                .currentPageNumber(allPassengersViews.getNumber())
+                .totalPages(allPassengersViews.getTotalPages())
+                .totalElements(allPassengersViews.getTotalElements())
+                .build();
+    }
+
+    private NewPassengerInfoMessage buildNewPassengerInfoMessage(Passenger passenger) {
+        return NewPassengerInfoMessage.builder()
+                .passengerExternalId(passenger.getExternalId())
+                .build();
+    }
+
+    private RemovePassengerInfoMessage buildRemovePassengerInfoMessage(Passenger passenger) {
+        return RemovePassengerInfoMessage.builder()
+                .passengerExternalId(passenger.getExternalId())
+                .build();
     }
 }

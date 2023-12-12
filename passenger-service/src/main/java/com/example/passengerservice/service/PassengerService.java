@@ -1,13 +1,14 @@
 package com.example.passengerservice.service;
 
+import com.example.passengerservice.amqp.message.ChangeDefaultPaymentMethodMessage;
+import com.example.passengerservice.amqp.message.ErrorInfoMessage;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
+import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
-import com.example.passengerservice.dto.response.PassengerResponseDto;
+import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
-import com.example.passengerservice.model.projections.PassengerView;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
@@ -16,13 +17,13 @@ public interface PassengerService {
 
     CreatePassengerResponse signUp(PassengerRegistrationDto passengerDto);
 
-    PassengerResponseDto findPassengerByExternalId(UUID externalId);
+    PassengerResponse findPassengerByExternalId(UUID externalId);
 
     PaymentInfoResponse findPassengerPaymentInfo(UUID externalId);
 
-    Page<PassengerView> findAllPassengers(Pageable pageable);
+    AllPassengersResponse findAllPassengers(Pageable pageable);
 
-    PassengerResponseDto update(UUID externalId, PassengerRequestDto passengerDto);
+    PassengerResponse update(UUID externalId, PassengerRequestDto passengerDto);
 
     void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId);
 
@@ -31,5 +32,9 @@ public interface PassengerService {
     void delete(UUID externalId);
 
     void updatePassengerPhone(UUID externalId, ChangePhoneRequest changePhoneRequest);
+
+    void updateDefaultPaymentMethod(ChangeDefaultPaymentMethodMessage message);
+
+    void resetDefaultPaymentMethod(ErrorInfoMessage message);
 
 }

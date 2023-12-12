@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -17,10 +16,7 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
     @Query("SELECT CASE WHEN COUNT(p) >= 1 THEN true ELSE false END FROM Passenger p WHERE p.phone = :phone")
     boolean existsByPhone(String phone);
 
-    @Query("SELECT p FROM Passenger p LEFT JOIN FETCH p.cards c LEFT JOIN FETCH c.card WHERE p.externalId = :externalId")
-    Optional<Passenger> findByExternalIdFetch(@Param("externalId") UUID externalId);
-
-    Optional<Passenger> findByExternalId(@Param("externalId") UUID externalId);
+    Optional<Passenger> findByExternalId(UUID externalId);
 
     @Query(value = """
                         

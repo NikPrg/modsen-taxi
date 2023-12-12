@@ -1,16 +1,15 @@
 package com.example.passengerservice.controller.api;
 
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
+import com.example.passengerservice.dto.response.AllPassengersResponse;
+import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
-import com.example.passengerservice.model.projections.PassengerView;
 import com.example.passengerservice.dto.request.PassengerRegistrationDto;
 import com.example.passengerservice.dto.request.PassengerRequestDto;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
-import com.example.passengerservice.dto.response.PassengerResponseDto;
 import com.example.passengerservice.service.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -30,9 +29,8 @@ import java.util.UUID;
 
 import static com.example.passengerservice.util.ApiRoutesConstants.*;
 
-
 @RestController
-@RequestMapping(PUBLIC_API_V1)
+@RequestMapping(PUBLIC_API_V1_PASSENGERS)
 @RequiredArgsConstructor
 public class PassengerController {
 
@@ -46,7 +44,7 @@ public class PassengerController {
 
     @GetMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
-    public PassengerResponseDto findPassengerByExternalId(@PathVariable UUID externalId) {
+    public PassengerResponse findPassengerByExternalId(@PathVariable UUID externalId) {
         return passengerService.findPassengerByExternalId(externalId);
     }
 
@@ -58,15 +56,15 @@ public class PassengerController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<PassengerView> findAllPassengers(
+    public AllPassengersResponse findAllPassengers(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return passengerService.findAllPassengers(pageable);
     }
 
     @PutMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
-    public PassengerResponseDto updatePassenger(@PathVariable UUID externalId,
-                                                @RequestBody @Valid PassengerRequestDto dto) {
+    public PassengerResponse updatePassenger(@PathVariable UUID externalId,
+                                             @RequestBody @Valid PassengerRequestDto dto) {
         return passengerService.update(externalId, dto);
     }
 

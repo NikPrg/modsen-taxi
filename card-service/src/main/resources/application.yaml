@@ -1,0 +1,49 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: card-service
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+    enabled: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taxi-cards
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        generate_statistics: false
+        format_sql: false
+        show_sql: false
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      bootstrap-servers: localhost:9092
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: card-service-group
+
+  messages:
+    basename: messages-constants
+
+app:
+  kafka:
+    topic:
+      payment-method-details: payment-method-details
+      card-default-status-details: card-default-status-details
+      new-passenger-details: new-passenger-details
+      removed-passenger-details: removed-passenger-details
+      error-card-details: error-card-details
+
+logging:
+  level:
+    web: INFO

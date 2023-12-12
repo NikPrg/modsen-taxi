@@ -1,7 +1,6 @@
 package com.example.passengerservice.controller;
 
 import com.example.passengerservice.dto.response.error.ErrorResponse;
-import com.example.passengerservice.exception.CardNotBelongPassengerException;
 import com.example.passengerservice.exception.EntityAlreadyExistException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handeEntityNotFoundException(EntityNotFoundException ex) {
@@ -92,24 +90,5 @@ public class GlobalExceptionHandler {
                 .message(message)
                 .timestamp(LocalDateTime.now())
                 .build();
-
-    }
-
-    @ExceptionHandler(CardNotBelongPassengerException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleCardNotBelongPassengerException(CardNotBelongPassengerException ex) {
-        val exceptionId = UUID.randomUUID().toString();
-        val message = ex.getMessage();
-
-        if (log.isInfoEnabled()) {
-            log.info("Handled card not belong passenger exception: msg='{}', exceptionId='{}", message, exceptionId);
-        }
-
-        return ErrorResponse.builder()
-                .id(exceptionId)
-                .message(message)
-                .timestamp(LocalDateTime.now())
-                .build();
-
     }
 }

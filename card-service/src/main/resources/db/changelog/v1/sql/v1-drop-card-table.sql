@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS cards;
+DROP SEQUENCE IF EXISTS card_id_generator;
