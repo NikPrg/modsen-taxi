@@ -6,6 +6,7 @@ import com.example.ridesservice.util.KafkaUtils;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.IntegrationMessageHeaderAccessor;
@@ -33,23 +34,23 @@ public class KafkaProducerConfig {
     private String driverStatusEventsTopic;
 
     @Bean
-    public IntegrationFlow sendToKafkaFlow() {
+    public IntegrationFlow sendToKafkaFlow(KafkaProperties kafkaProperties) {
         return f -> f
                 .channel(RIDE_INFO_KAFKA_CHANNEL)
-                .handle(Kafka.outboundChannelAdapter(kafkaTemplate())
+                .handle(Kafka.outboundChannelAdapter(kafkaTemplate(kafkaProperties))
                         .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
                         .headerMapper(mapper())
                         .topic(rideInfoEventsTopic))
                 .channel(DRIVER_STATUS_KAFKA_CHANNEL)
-                .handle(Kafka.outboundChannelAdapter(kafkaTemplate())
+                .handle(Kafka.outboundChannelAdapter(kafkaTemplate(kafkaProperties))
                         .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
                         .headerMapper(mapper())
                         .topic(driverStatusEventsTopic));
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, String> kafkaTemplate(KafkaProperties kafkaProperties) {
+        return new KafkaTemplate<>(producerFactory(kafkaProperties));
     }
 
     @Bean
@@ -58,8 +59,8 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(kafkaConfigs());
+    public ProducerFactory<String, String> producerFactory(KafkaProperties kafkaProperties) {
+        return new DefaultKafkaProducerFactory<>(kafkaConfigs(kafkaProperties));
     }
 
     @Bean
@@ -73,13 +74,14 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public Map<String, Object> kafkaConfigs() {
+    public Map<String, Object> kafkaConfigs(KafkaProperties kafkaProperties) {
+        Map<String, Object> producerProperties = kafkaProperties.buildProducerProperties();
         String typeMappings = KafkaUtils.buildTypeMappings(RideInfoMessage.class, DriverStatusMessage.class);
 
-        return Map.of(
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
-                JsonSerializer.TYPE_MAPPINGS, typeMappings
-        );
+        producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        producerProperties.put(JsonSerializer.TYPE_MAPPINGS, typeMappings);
+
+        return producerProperties;
     }
 }

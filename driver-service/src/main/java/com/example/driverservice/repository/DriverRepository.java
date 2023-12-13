@@ -31,5 +31,5 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
             """, nativeQuery = true)
     Page<DriverView> findAllDriversViews(Pageable pageable);
 
-    Optional<Driver> findDriverByDriverStatus(DriverStatus driverStatus);
+    Optional<Driver> findFirstByDriverStatus(DriverStatus driverStatus);
 }
