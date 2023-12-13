@@ -95,7 +95,7 @@ public class DriverServiceImpl implements DriverService {
     @Transactional
     @Override
     public void notifyDrivers(RideInfoMessage rideInfoMessage) {
-        driverRepo.findDriverByDriverStatus(DriverStatus.AVAILABLE)
+        driverRepo.findFirstByDriverStatus(DriverStatus.AVAILABLE)
                 .ifPresentOrElse(driver -> {
                             driver.setDriverStatus(DriverStatus.TOWARDS_PASSENGER);
                             sendRideAcceptConfirmation(rideInfoMessage, driver);
