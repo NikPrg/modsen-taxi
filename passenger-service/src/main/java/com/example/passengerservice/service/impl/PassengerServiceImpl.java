@@ -3,8 +3,8 @@ package com.example.passengerservice.service.impl;
 import com.example.passengerservice.amqp.handler.SendRequestHandler;
 import com.example.passengerservice.amqp.message.*;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
-import com.example.passengerservice.dto.request.PassengerRegistrationDto;
-import com.example.passengerservice.dto.request.PassengerRequestDto;
+import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
+import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
@@ -38,7 +38,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Transactional
     @Override
-    public CreatePassengerResponse signUp(PassengerRegistrationDto passengerDto) {
+    public CreatePassengerResponse signUp(PassengerRegistrationRequest passengerDto) {
         checkPhoneForUniqueness(passengerDto.phone());
         val passenger = passengerMapper.toPassenger(passengerDto);
         passengerRepo.save(passenger);
@@ -64,12 +64,13 @@ public class PassengerServiceImpl implements PassengerService {
     @Override
     public AllPassengersResponse findAllPassengers(Pageable pageable) {
         Page<PassengerView> allPassengersViews = passengerRepo.findAllPassengersView(pageable);
-        return buildAllPassengersResponse(allPassengersViews);
+        AllPassengersResponse allPassengersResponse = buildAllPassengersResponse(allPassengersViews);
+        return allPassengersResponse;
     }
 
     @Transactional
     @Override
-    public PassengerResponse update(UUID externalId, PassengerRequestDto passengerDto) {
+    public PassengerResponse update(UUID externalId, PassengerRequest passengerDto) {
         var passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
         passengerMapper.updatePassenger(passengerDto, passenger);
@@ -86,6 +87,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
 
         passenger.setPhone(updatedPhone);
+        passengerRepo.save(passenger);
     }
 
     @Transactional
@@ -112,6 +114,7 @@ public class PassengerServiceImpl implements PassengerService {
         sendRequestHandler.sendCardUsedAsDefaultChangeRequestToKafka(message);
 
         passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
+        passengerRepo.save(passenger);
     }
 
     @Transactional
@@ -128,6 +131,7 @@ public class PassengerServiceImpl implements PassengerService {
         sendRequestHandler.sendCardUsedAsDefaultChangeRequestToKafka(message);
 
         passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
+        passengerRepo.save(passenger);
     }
 
     @Transactional

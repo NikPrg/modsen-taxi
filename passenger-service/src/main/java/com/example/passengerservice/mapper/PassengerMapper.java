@@ -1,7 +1,7 @@
 package com.example.passengerservice.mapper;
 
-import com.example.passengerservice.dto.request.PassengerRegistrationDto;
-import com.example.passengerservice.dto.request.PassengerRequestDto;
+import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
+import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
@@ -25,12 +25,12 @@ public interface PassengerMapper {
     @Mapping(target = "externalId", expression = "java(java.util.UUID.randomUUID())")
     @Mapping(target = "rate", constant = "5.0")
     @Mapping(target = "defaultPaymentMethod", constant = "CASH")
-    Passenger toPassenger(PassengerRegistrationDto passengerDto);
+    Passenger toPassenger(PassengerRegistrationRequest passengerDto);
 
     PassengerResponse toDto(Passenger passenger);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Passenger updatePassenger(PassengerRequestDto source, @MappingTarget Passenger target);
+    Passenger updatePassenger(PassengerRequest source, @MappingTarget Passenger target);
 
     @Mapping(target = "paymentMethod", source = "defaultPaymentMethod")
     CreatePassengerResponse toCreateDto(Passenger passenger);

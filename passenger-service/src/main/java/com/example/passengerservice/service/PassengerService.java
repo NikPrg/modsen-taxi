@@ -3,8 +3,8 @@ package com.example.passengerservice.service;
 import com.example.passengerservice.amqp.message.ChangeDefaultPaymentMethodMessage;
 import com.example.passengerservice.amqp.message.ErrorInfoMessage;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
-import com.example.passengerservice.dto.request.PassengerRegistrationDto;
-import com.example.passengerservice.dto.request.PassengerRequestDto;
+import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
+import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public interface PassengerService {
 
-    CreatePassengerResponse signUp(PassengerRegistrationDto passengerDto);
+    CreatePassengerResponse signUp(PassengerRegistrationRequest passengerDto);
 
     PassengerResponse findPassengerByExternalId(UUID externalId);
 
@@ -23,7 +23,7 @@ public interface PassengerService {
 
     AllPassengersResponse findAllPassengers(Pageable pageable);
 
-    PassengerResponse update(UUID externalId, PassengerRequestDto passengerDto);
+    PassengerResponse update(UUID externalId, PassengerRequest passengerDto);
 
     void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId);
 
