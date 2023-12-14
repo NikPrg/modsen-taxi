@@ -4,8 +4,8 @@ import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
 import com.example.passengerservice.dto.response.PaymentInfoResponse;
-import com.example.passengerservice.dto.request.PassengerRegistrationDto;
-import com.example.passengerservice.dto.request.PassengerRequestDto;
+import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
+import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.service.PassengerService;
 import jakarta.validation.Valid;
@@ -38,7 +38,7 @@ public class PassengerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CreatePassengerResponse createPassenger(@RequestBody @Valid PassengerRegistrationDto passengerDto) {
+    public CreatePassengerResponse createPassenger(@RequestBody @Valid PassengerRegistrationRequest passengerDto) {
         return passengerService.signUp(passengerDto);
     }
 
@@ -64,7 +64,7 @@ public class PassengerController {
     @PutMapping("{externalId}")
     @ResponseStatus(HttpStatus.OK)
     public PassengerResponse updatePassenger(@PathVariable UUID externalId,
-                                             @RequestBody @Valid PassengerRequestDto dto) {
+                                             @RequestBody @Valid PassengerRequest dto) {
         return passengerService.update(externalId, dto);
     }
 

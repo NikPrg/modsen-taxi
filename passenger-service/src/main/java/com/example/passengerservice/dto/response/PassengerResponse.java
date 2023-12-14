@@ -1,7 +1,9 @@
 package com.example.passengerservice.dto.response;
 
-import java.util.UUID;
+import lombok.Builder;
 
+import java.util.UUID;
+@Builder
 public record PassengerResponse(
         Long id,
         UUID externalId,
