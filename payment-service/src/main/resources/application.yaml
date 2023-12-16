@@ -1,1 +1,27 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: payment-service
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+    enabled: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/taxi-card-balances
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        generate_statistics: false
+        format_sql: false
+        show_sql: false
+
 
