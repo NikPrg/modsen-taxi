@@ -1,6 +1,7 @@
 package com.example.cardservice.service.impl;
 
 import com.example.cardservice.amqp.handler.SendRequestHandler;
+import com.example.cardservice.amqp.message.CardInfoMessage;
 import com.example.cardservice.amqp.message.ChangeCardUsedAsDefaultMessage;
 import com.example.cardservice.amqp.message.ChangeDefaultPaymentMethodMessage;
 import com.example.cardservice.amqp.message.ErrorInfoMessage;
@@ -47,6 +48,8 @@ public class CardServiceImpl implements CardService {
         UUID externalId = cardRepo.findByNumber(cardDto.number())
                 .map(storedCard -> addCardIfNotExisted(passengerInfo, storedCard))
                 .orElseGet(() -> createAndAddNewCard(passengerInfo, cardDto));
+
+        sendRequestHandler.sendNewCardInfoToKafka(new CardInfoMessage(externalId));
 
         return new CreateCardResponse(externalId);
     }

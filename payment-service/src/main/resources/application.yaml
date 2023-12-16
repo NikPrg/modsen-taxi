@@ -24,4 +24,18 @@ spring:
         format_sql: false
         show_sql: false
 
+  kafka:
+    bootstrap-servers: localhost:9092
 
+  cloud:
+    function:
+      definition: consumeCardInfo
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+      bindings:
+        consumeCardInfo-in-0:
+          destination: new-card-details
+          group: payment-service
