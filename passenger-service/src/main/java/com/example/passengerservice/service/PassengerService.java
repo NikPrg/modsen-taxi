@@ -8,7 +8,7 @@ import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
-import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.dto.response.PaymentMethodResponse;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
@@ -19,7 +19,7 @@ public interface PassengerService {
 
     PassengerResponse findPassengerByExternalId(UUID externalId);
 
-    PaymentInfoResponse findPassengerPaymentInfo(UUID externalId);
+    PaymentMethodResponse findPassengerPaymentMethod(UUID externalId);
 
     AllPassengersResponse findAllPassengers(Pageable pageable);
 

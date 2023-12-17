@@ -1,8 +1,10 @@
 package com.example.ridesservice.config.kafka.consumer;
 
 import com.example.ridesservice.amqp.message.DriverInfoMessage;
+import com.example.ridesservice.amqp.message.PaymentInfoMessage;
 import com.example.ridesservice.model.enums.DriverStatus;
 import com.example.ridesservice.service.DriverInfoService;
+import com.example.ridesservice.service.RideService;
 import com.example.ridesservice.util.KafkaUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -25,17 +27,28 @@ public class KafkaConsumerConfig {
     private static final String DRIVER_STATUS_EXPRESSION = "payload.driverStatus";
 
     private final DriverInfoService driverInfoService;
+    private final RideService rideService;
 
     @Value("${app.kafka.topic.driver-info-events}")
     private String driverInfoEventsTopic;
 
+    @Value("${app.kafka.topic.payment-result}")
+    private String paymentResultTopic;
+
     @Bean
-    public IntegrationFlow consumeFromKafka(ConsumerFactory<String, String> consumerFactory) {
+    public IntegrationFlow consumeDriverInfoFromKafka(ConsumerFactory<String, String> consumerFactory) {
         return IntegrationFlow.from(Kafka.messageDrivenChannelAdapter(consumerFactory, driverInfoEventsTopic))
                 .route(DRIVER_STATUS_EXPRESSION, r -> r
                         .subFlowMapping(DriverStatus.CREATED, fl -> fl.handle(driverInfoService, "saveNewDriverData"))
                         .defaultOutputToParentFlow())
                 .handle(driverInfoService, "updateDriverData")
+                .get();
+    }
+
+    @Bean
+    public IntegrationFlow consumePaymentResultFromKafka(ConsumerFactory<String, String> consumerFactory) {
+        return IntegrationFlow.from(Kafka.messageDrivenChannelAdapter(consumerFactory, paymentResultTopic))
+                .handle(rideService, "handlePaymentResult")
                 .get();
     }
 
@@ -47,7 +60,10 @@ public class KafkaConsumerConfig {
     @Bean
     public Map<String, Object> consumerConfigs(KafkaProperties kafkaProperties) {
         Map<String, Object> consumerProperties = kafkaProperties.buildConsumerProperties();
-        String typeMappings = KafkaUtils.buildTypeMappings(DriverInfoMessage.class);
+        String typeMappings = KafkaUtils.buildTypeMappings(
+                DriverInfoMessage.class,
+                PaymentInfoMessage.class
+        );
 
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);

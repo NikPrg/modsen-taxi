@@ -4,7 +4,7 @@ import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
 import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
-import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.dto.response.PaymentMethodResponse;
 import com.example.passengerservice.model.Passenger;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Builder;
@@ -36,5 +36,5 @@ public interface PassengerMapper {
     CreatePassengerResponse toCreateDto(Passenger passenger);
 
     @Mapping(target = "paymentMethod", source = "defaultPaymentMethod")
-    PaymentInfoResponse toPaymentInfoDto(Passenger passenger);
+    PaymentMethodResponse toPaymentMethodDto(Passenger passenger);
 }

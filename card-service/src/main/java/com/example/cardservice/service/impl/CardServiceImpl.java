@@ -8,8 +8,8 @@ import com.example.cardservice.amqp.message.ErrorInfoMessage;
 import com.example.cardservice.dto.request.CardRegistrationDto;
 import com.example.cardservice.dto.response.AllCardsResponse;
 import com.example.cardservice.dto.response.CreateCardResponse;
+import com.example.cardservice.dto.response.DefaultCardResponse;
 import com.example.cardservice.exception.EntityAlreadyExistException;
-import com.example.cardservice.exception.PassengerNotFoundException;
 import com.example.cardservice.mapper.CardMapper;
 import com.example.cardservice.model.Card;
 import com.example.cardservice.model.PassengerCard;
@@ -18,8 +18,8 @@ import com.example.cardservice.repository.CardRepository;
 import com.example.cardservice.repository.PassengerInfoRepository;
 import com.example.cardservice.service.CardService;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +43,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public CreateCardResponse create(CardRegistrationDto cardDto, UUID passengerExternalId) {
         var passengerInfo = passengerInfoRepo.findByExternalId(passengerExternalId)
-                .orElseThrow(() -> new PassengerNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         UUID externalId = cardRepo.findByNumber(cardDto.number())
                 .map(storedCard -> addCardIfNotExisted(passengerInfo, storedCard))
@@ -57,7 +57,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public AllCardsResponse findCardsByPassengerExternalId(UUID passengerExternalId) {
         var passengerInfo = passengerInfoRepo.findByExternalIdFetch(passengerExternalId)
-                .orElseThrow(() -> new PassengerNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         return new AllCardsResponse(passengerInfo.getCards().stream()
                 .map(PassengerCard::getCard)
@@ -70,11 +70,10 @@ public class CardServiceImpl implements CardService {
     public void deletePassengerCard(UUID passengerExternalId, UUID cardExternalId) {
         var passengerInfo = passengerInfoRepo.findByExternalIdAndCardExternalId(passengerExternalId, cardExternalId)
                 .orElseThrow(() ->
-                        new PassengerNotFoundException(PASSENGER_WITH_SPECIFIED_CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId)));
+                        new EntityNotFoundException(PASSENGER_WITH_SPECIFIED_CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId)));
         removePassengerCard(passengerInfo);
     }
 
-    @Retryable(noRetryFor = PassengerNotFoundException.class)
     @Transactional
     @Override
     public void setCardAsUsedDefault(ChangeCardUsedAsDefaultMessage message) {
@@ -89,10 +88,10 @@ public class CardServiceImpl implements CardService {
         try {
             var passengerInfo = passengerInfoRepo.findByExternalIdAndCardExternalId(passengerExternalId, cardExternalId)
                     .orElseThrow(() ->
-                            new PassengerNotFoundException(PASSENGER_WITH_SPECIFIED_CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId)));
+                            new EntityNotFoundException(PASSENGER_WITH_SPECIFIED_CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId, cardExternalId)));
             passengerInfo.getCards().get(0).setUsedAsDefault(true);
 
-        } catch (PassengerNotFoundException ex) {
+        } catch (EntityNotFoundException ex) {
             sendRequestHandler.sendErrorInfoMessageToKafka(
                     new ErrorInfoMessage(passengerExternalId, ex.getMessage()));
         }
@@ -107,6 +106,17 @@ public class CardServiceImpl implements CardService {
                 .map(PassengerInfo::getCards)
                 .flatMap(Collection::stream)
                 .forEach(passengerCard -> passengerCard.setUsedAsDefault(false));
+    }
+
+    @Override
+    public DefaultCardResponse findDefaultCardByPassengerExternalId(UUID passengerExternalId) {
+        passengerInfoRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+
+        var defaultCard = cardRepo.findDefaultCardByPassengerExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(DEFAULT_CARD_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
+
+        return new DefaultCardResponse(defaultCard.getExternalId());
     }
 
     private UUID addCardIfNotExisted(PassengerInfo passenger, Card storedCard) {

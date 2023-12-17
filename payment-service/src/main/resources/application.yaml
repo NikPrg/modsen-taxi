@@ -7,7 +7,7 @@ spring:
 
   liquibase:
     change-log: db/changelog/main-changelog.xml
-    enabled: false
+    enabled: true
 
   datasource:
     url: jdbc:postgresql://localhost:5432/taxi-card-balances
@@ -17,7 +17,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         generate_statistics: false
@@ -29,13 +29,21 @@ spring:
 
   cloud:
     function:
-      definition: consumeCardInfo
+      definition: consumeCardInfo;processRidePayment
     stream:
       kafka:
         binder:
           brokers:
             - localhost:9092
+
       bindings:
         consumeCardInfo-in-0:
           destination: new-card-details
           group: payment-service
+
+        processRidePayment-in-0:
+          destination: ride-payment-events
+          group: payment-service
+
+        processRidePayment-out-0:
+          destination: payment-result

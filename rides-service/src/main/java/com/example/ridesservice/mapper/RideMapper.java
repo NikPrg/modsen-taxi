@@ -9,7 +9,6 @@ import com.example.ridesservice.dto.response.ride.GetRideResponse;
 import com.example.ridesservice.dto.response.ride.StartRideResponse;
 import com.example.ridesservice.model.DriverInfo;
 import com.example.ridesservice.model.Ride;
-import com.example.ridesservice.model.enums.PaymentMethod;
 import org.mapstruct.Mapper;
 import org.mapstruct.Builder;
 import org.mapstruct.BeanMapping;
@@ -47,13 +46,6 @@ public interface RideMapper {
     @Mapping(target = "externalId", ignore = true)
     @Mapping(target = "rideStatus", constant = "ACCEPTED")
     void updateRideOnAcceptance(DriverInfo driver, @MappingTarget Ride ride);
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "externalId", ignore = true)
-    @Mapping(target = "rideStatus", constant = "FINISHED")
-    @Mapping(target = "rideDuration", expression = "java(java.time.temporal.ChronoUnit.MINUTES.between(ride.getRideStartedAt(), java.time.LocalTime.now()))")
-    void updateRideOnFinish(PaymentMethod paymentMethod, @MappingTarget Ride ride);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     FinishRideResponse toFinishRideResponse(Ride ride);

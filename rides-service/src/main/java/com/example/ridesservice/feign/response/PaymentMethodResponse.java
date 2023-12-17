@@ -1,8 +1,8 @@
-package com.example.ridesservice.dto.response;
+package com.example.ridesservice.feign.response;
 
 import com.example.ridesservice.model.enums.PaymentMethod;
 
-public record PaymentInfoResponse(
+public record PaymentMethodResponse(
         PaymentMethod paymentMethod
 ) {
 }

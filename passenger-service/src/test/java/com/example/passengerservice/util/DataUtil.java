@@ -6,7 +6,7 @@ import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
 import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
-import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.dto.response.PaymentMethodResponse;
 import com.example.passengerservice.model.Discount;
 import com.example.passengerservice.model.Passenger;
 import com.example.passengerservice.model.enums.PaymentMethod;
@@ -110,8 +110,8 @@ public class DataUtil {
                 .build();
     }
 
-    public static PaymentInfoResponse defaultPaymentInfoResponseCash() {
-        return PaymentInfoResponse.builder()
+    public static PaymentMethodResponse defaultPaymentMethodResponseCash() {
+        return PaymentMethodResponse.builder()
                 .paymentMethod(PAYMENT_METHOD_CASH)
                 .build();
     }

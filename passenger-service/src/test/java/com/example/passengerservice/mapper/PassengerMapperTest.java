@@ -4,7 +4,7 @@ import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
 import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
-import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.dto.response.PaymentMethodResponse;
 import com.example.passengerservice.model.Passenger;
 import com.example.passengerservice.util.DataUtil;
 import org.junit.jupiter.api.BeforeAll;
@@ -72,9 +72,9 @@ public class PassengerMapperTest {
     @Test
     void toPaymentInfoDto_shouldReturnExpectedResponse() {
         Passenger passenger = DataUtil.defaultPassenger();
-        PaymentInfoResponse expected = DataUtil.defaultPaymentInfoResponseCash();
+        PaymentMethodResponse expected = DataUtil.defaultPaymentMethodResponseCash();
 
-        PaymentInfoResponse actual = passengerMapper.toPaymentInfoDto(passenger);
+        PaymentMethodResponse actual = passengerMapper.toPaymentMethodDto(passenger);
 
         assertThat(actual).isEqualTo(expected);
     }

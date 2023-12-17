@@ -1,6 +1,7 @@
 package com.example.ridesservice.model;
 
 import com.example.ridesservice.model.enums.PaymentMethod;
+import com.example.ridesservice.model.enums.PaymentStatus;
 import com.example.ridesservice.model.enums.RideStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -52,6 +53,9 @@ public class Ride {
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     @Enumerated(EnumType.STRING)
     private RideStatus rideStatus;

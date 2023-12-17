@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface CardBalanceRepository extends JpaRepository<CardBalance, Long> {
     boolean existsByCardExternalId(UUID cardExternalId);
+    Optional<CardBalance> findByCardExternalId(UUID cardExternalId);
 }

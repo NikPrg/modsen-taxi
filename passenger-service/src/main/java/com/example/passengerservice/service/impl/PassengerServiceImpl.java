@@ -8,7 +8,7 @@ import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
-import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.dto.response.PaymentMethodResponse;
 import com.example.passengerservice.exception.CardServiceIntegrationException;
 import com.example.passengerservice.mapper.PassengerMapper;
 import com.example.passengerservice.model.Passenger;
@@ -54,18 +54,17 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PaymentInfoResponse findPassengerPaymentInfo(UUID externalId) {
+    public PaymentMethodResponse findPassengerPaymentMethod(UUID externalId) {
         val passenger = passengerRepo.findByExternalId(externalId)
                 .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
-        return passengerMapper.toPaymentInfoDto(passenger);
+        return passengerMapper.toPaymentMethodDto(passenger);
     }
 
     @Transactional(readOnly = true)
     @Override
     public AllPassengersResponse findAllPassengers(Pageable pageable) {
         Page<PassengerView> allPassengersViews = passengerRepo.findAllPassengersView(pageable);
-        AllPassengersResponse allPassengersResponse = buildAllPassengersResponse(allPassengersViews);
-        return allPassengersResponse;
+        return buildAllPassengersResponse(allPassengersViews);
     }
 
     @Transactional
