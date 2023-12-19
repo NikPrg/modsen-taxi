@@ -29,7 +29,7 @@ public class PaymentServiceImpl implements PaymentService {
     public void addNewCard(CardInfoMessage message) {
         UUID cardExternalId = message.cardExternalId();
 
-        if (Boolean.FALSE.equals(cardBalanceRepo.existsByCardExternalId(cardExternalId))) {
+        if (!cardBalanceRepo.existsByCardExternalId(cardExternalId)) {
             BigDecimal generatedCardBalance = FakeBalanceGenerator.generateCardBalance();
             CardBalance cardBalance = buildCardBalanceEntity(cardExternalId, generatedCardBalance);
             cardBalanceRepo.save(cardBalance);
