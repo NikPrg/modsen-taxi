@@ -41,7 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentInfoMessage processPayment(RidePaymentMessage message) {
         UUID cardExternalId = message.cardExternalId();
 
-        var balance = cardBalanceRepo.findByCardExternalId(cardExternalId)
+        CardBalance balance = cardBalanceRepo.findByCardExternalId(cardExternalId)
                 .orElseThrow(() ->
                         new EntityNotFoundException(CARD_BALANCE_NOT_FOUND_ERROR_MESSAGE.formatted(cardExternalId)));
 
