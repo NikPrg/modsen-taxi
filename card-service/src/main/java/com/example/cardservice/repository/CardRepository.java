@@ -15,12 +15,12 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     Optional<Card> findByNumber(String number);
 
     @Query(value = """
-                       
+
             SELECT COUNT(c) > 0
             FROM Card c
             JOIN  c.passengers pc
             WHERE pc.passenger.externalId = :passengerExternalId AND c.externalId = :cardExternalId
-                       
+              
             """)
     boolean existsCardForPassenger(@Param("cardExternalId") UUID cardExternalId, @Param("passengerExternalId") UUID passengerExternalId);
 

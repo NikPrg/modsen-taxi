@@ -37,8 +37,8 @@ dependencies {
     implementation "org.springframework.integration:spring-integration-http:${springIntegrationVersion}"
     implementation 'org.liquibase:liquibase-core'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"

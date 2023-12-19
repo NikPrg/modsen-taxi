@@ -9,6 +9,8 @@ import com.example.driverservice.exception.CarNotBelongDriverException;
 import com.example.driverservice.exception.DriverAlreadyHasCarException;
 import com.example.driverservice.exception.DriverCarNotFoundException;
 import com.example.driverservice.mapper.CarMapper;
+import com.example.driverservice.model.entity.Car;
+import com.example.driverservice.model.entity.Driver;
 import com.example.driverservice.model.enums.DriverStatus;
 import com.example.driverservice.model.projections.CarView;
 import com.example.driverservice.repository.CarRepository;
@@ -47,9 +49,7 @@ public class CarServiceImpl implements CarService {
             throw new DriverAlreadyHasCarException(DRIVER_ALREADY_HAS_CAR_EXCEPTION_MESSAGE.formatted(driverExternalId));
         }
 
-        var car = carMapper.toCar(carRequest);
-        car.addDriver(driver);
-        carRepo.save(car);
+        var car = createCarForDriver(carRequest, driver);
         driver.setDriverStatus(DriverStatus.AVAILABLE);
 
         sendRequestHandler.sendDriverInfoRequestToKafka(dataComposerUtils.buildDriverInfoMessage(driver));
@@ -109,6 +109,13 @@ public class CarServiceImpl implements CarService {
         driver.setDriverStatus(DriverStatus.NO_CAR);
 
         sendRequestHandler.sendDriverInfoRequestToKafka(dataComposerUtils.buildDriverInfoMessage(driver));
+    }
+
+    private Car createCarForDriver(CarRequest carRequest, Driver driver) {
+        var car = carMapper.toCar(carRequest);
+        car.addDriver(driver);
+        carRepo.save(car);
+        return car;
     }
 
 }

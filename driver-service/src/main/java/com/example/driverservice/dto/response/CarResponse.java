@@ -1,7 +1,9 @@
 package com.example.driverservice.dto.response;
 
-import java.util.UUID;
+import lombok.Builder;
 
+import java.util.UUID;
+@Builder
 public record CarResponse(
         Long id,
         UUID externalId,
