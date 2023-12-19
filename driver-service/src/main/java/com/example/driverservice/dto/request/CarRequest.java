@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 import static com.example.driverservice.util.RegexpConstants.*;
+
 @Builder
 public record CarRequest(
         @Pattern(regexp = LICENSE_PLATE_REGEXP,

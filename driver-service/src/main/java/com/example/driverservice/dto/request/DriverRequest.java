@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 import static com.example.driverservice.util.RegexpConstants.*;
+
 @Builder
 public record DriverRequest(
         @NotBlank(message = "{firstName.notBlank}")
