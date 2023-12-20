@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 import static com.example.passengerservice.util.RegexpConstants.*;
+
 @Builder
 public record PassengerRegistrationRequest(
         @Pattern(regexp = PHONE_REGEXP,

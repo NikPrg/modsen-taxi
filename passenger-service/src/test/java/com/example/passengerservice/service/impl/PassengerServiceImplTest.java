@@ -39,7 +39,7 @@ import static org.mockito.Mockito.doNothing;
 @ExtendWith(MockitoExtension.class)
 public class PassengerServiceImplTest {
 
-    private ProjectionFactory projectionFactory = new SpelAwareProxyProjectionFactory();
+    private final ProjectionFactory projectionFactory = new SpelAwareProxyProjectionFactory();
 
     @Mock
     private PassengerMapper passengerMapper;
@@ -173,7 +173,6 @@ public class PassengerServiceImplTest {
 
         AllPassengersResponse actual = passengerService.findAllPassengers(pageable);
 
-        assertThat(actual.totalElements()).isEqualTo(3);
         assertThat(actual).isEqualTo(expected);
 
         verify(passengerRepository).findAllPassengersView(pageable);

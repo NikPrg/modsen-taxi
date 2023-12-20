@@ -12,11 +12,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Index;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -29,6 +25,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @EqualsAndHashCode(of = "externalId")
+@Builder
 public class Driver {
     @Id
     @SequenceGenerator(name = "driver_generator", allocationSize = 5)

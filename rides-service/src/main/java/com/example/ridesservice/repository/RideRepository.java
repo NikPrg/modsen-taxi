@@ -29,7 +29,7 @@ public interface RideRepository extends JpaRepository<Ride, Long> {
                 r.passenger_external_id=:passengerExternalId
                  
             """, nativeQuery = true)
-    Page<RideView> findByPassengerExternalId(@Param("passengerExternalId") UUID passengerExternalId, Pageable pageable);
+    Page<RideView> findAllPassengerRideViews(@Param("passengerExternalId") UUID passengerExternalId, Pageable pageable);
 
     Optional<Ride> findByExternalId(UUID externalId);
 
