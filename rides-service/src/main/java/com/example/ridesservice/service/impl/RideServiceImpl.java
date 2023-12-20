@@ -1,20 +1,25 @@
 package com.example.ridesservice.service.impl;
 
 import com.example.ridesservice.amqp.handler.SendRequestHandler;
+import com.example.ridesservice.amqp.message.PaymentInfoMessage;
 import com.example.ridesservice.dto.request.CreateRideRequest;
-import com.example.ridesservice.dto.response.PaymentInfoResponse;
 import com.example.ridesservice.dto.response.ride.*;
 import com.example.ridesservice.exception.DriverAlreadyInUseException;
 import com.example.ridesservice.exception.PassengerRideNotFoundException;
+import com.example.ridesservice.feign.client.CardClient;
+import com.example.ridesservice.feign.client.PassengerClient;
+import com.example.ridesservice.feign.response.DefaultCardResponse;
+import com.example.ridesservice.feign.response.PaymentMethodResponse;
 import com.example.ridesservice.mapper.RideMapper;
 import com.example.ridesservice.model.Ride;
 import com.example.ridesservice.model.enums.DriverStatus;
+import com.example.ridesservice.model.enums.PaymentMethod;
+import com.example.ridesservice.model.enums.PaymentStatus;
 import com.example.ridesservice.model.enums.RideStatus;
 import com.example.ridesservice.model.projection.RideView;
 import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.service.RideService;
-import com.example.ridesservice.util.DataComposerUtils;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,35 +29,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
 
-import java.time.Duration;
 import java.time.LocalTime;
-import java.util.Objects;
 import java.util.UUID;
 
+import static com.example.ridesservice.util.DataComposerUtils.*;
 import static com.example.ridesservice.util.ExceptionMessagesConstants.*;
+import static java.time.temporal.ChronoUnit.MINUTES;
 
 
 @Service
 @RequiredArgsConstructor
 public class RideServiceImpl implements RideService {
+
     private final RideRepository rideRepo;
     private final DriverInfoRepository driverInfoRepo;
     private final RideMapper rideMapper;
-    private final WebClient webClient;
     private final SendRequestHandler sendRequestHandler;
+    private final PassengerClient passengerClient;
+    private final CardClient cardClient;
     private final RideVerifier rideVerifier;
-    private final DataComposerUtils dataComposerUtils;
-    @Value("${app.routes.passengers.get-payment-method}")
-    private String passengersGetPaymentMethodUri;
-    @Value("${app.api.web-client.max-retry-attempts}")
-    private int maxRetryAttempts;
-    @Value("${app.api.web-client.delay-in-ms}")
-    private int delayMillis;
+
     @Value("${app.config.base-cost-per-km}")
     private int baseCostPerKm;
 
@@ -69,7 +66,7 @@ public class RideServiceImpl implements RideService {
     @Override
     public AllRidesResponse findAllPassengerRides(UUID passengerExternalId, Pageable pageable) {
         Page<RideView> allPassengerRidesViews = rideRepo.findByPassengerExternalId(passengerExternalId, pageable);
-        return dataComposerUtils.buildAllRidesDto(allPassengerRidesViews);
+        return buildAllRidesDto(allPassengerRidesViews);
     }
 
     @Transactional
@@ -78,10 +75,9 @@ public class RideServiceImpl implements RideService {
         var rideCost = calculateRideCost(createRideDto);
         var ride = rideMapper.toRide(createRideDto, passengerExternalId, rideCost);
 
-        sendRequestHandler.sendRideInfoRequestToKafka(dataComposerUtils.buildRideInfoMessage(ride));
+        sendRequestHandler.sendRideInfoRequestToKafka(buildRideInfoMessage(ride));
 
         rideRepo.save(ride);
-
         return rideMapper.toCreateRideDto(ride);
     }
 
@@ -116,8 +112,7 @@ public class RideServiceImpl implements RideService {
 
         initiateRideStartActions(ride);
 
-        sendRequestHandler.sendDriverStatusRequestToKafka(dataComposerUtils.buildDriverStatusMessage(ride.getDriver()));
-
+        sendRequestHandler.sendDriverStatusRequestToKafka(buildDriverStatusMessage(ride.getDriver()));
         return rideMapper.toStartRideDto(ride);
     }
 
@@ -128,33 +123,43 @@ public class RideServiceImpl implements RideService {
                 .orElseThrow(() -> new EntityNotFoundException(RIDE_NOT_FOUND_EXCEPTION_MESSAGE.formatted(rideExternalId)));
         rideVerifier.verifyFinishPossibility(ride, driverExternalId);
 
-        PaymentInfoResponse paymentInfo = requestPassengerPaymentInfo(ride.getPassengerExternalId());
+        providePassengerPayment(ride);
+        updateRideAndDriverOnFinish(ride);
 
-        //async call to payment microservice to provide payment for the ride
-
-        rideMapper.updateRideOnFinish(Objects.requireNonNull(paymentInfo).paymentMethod(), ride);
-
-        var driver = ride.getDriver();
-        driver.setDriverStatus(DriverStatus.AVAILABLE);
-
-        sendRequestHandler.sendDriverStatusRequestToKafka(dataComposerUtils.buildDriverStatusMessage(driver));
-
+        sendRequestHandler.sendDriverStatusRequestToKafka(buildDriverStatusMessage(ride.getDriver()));
         return rideMapper.toFinishRideResponse(ride);
     }
 
-    private PaymentInfoResponse requestPassengerPaymentInfo(UUID passengerExternalId) {
-        return webClient.get()
-                .uri(passengersGetPaymentMethodUri, passengerExternalId)
-                .exchangeToMono(this::getPaymentInfoResponse)
-                .retryWhen(Retry.fixedDelay(maxRetryAttempts, Duration.ofMillis(delayMillis)))
-                .block();
+    @Transactional
+    @Override
+    public void handlePaymentResult(PaymentInfoMessage message) {
+        UUID rideExternalId = message.rideExternalId();
+        var ride = rideRepo.findByExternalId(rideExternalId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(RIDE_NOT_FOUND_EXCEPTION_MESSAGE.formatted(rideExternalId)));
+
+        ride.setPaymentMethod(PaymentMethod.CARD);
+        ride.setPaymentStatus(message.paymentStatus());
+        rideRepo.save(ride);
     }
 
-    private Mono<PaymentInfoResponse> getPaymentInfoResponse(ClientResponse clientResponse) {
-        if (clientResponse.statusCode().is2xxSuccessful()) {
-            return clientResponse.bodyToMono(PaymentInfoResponse.class);
+    private void updateRideAndDriverOnFinish(Ride ride) {
+        ride.setRideStatus(RideStatus.FINISHED);
+        ride.setRideDuration(MINUTES.between(ride.getRideStartedAt(), LocalTime.now()));
+        ride.getDriver().setDriverStatus(DriverStatus.AVAILABLE);
+    }
+
+    private void providePassengerPayment(Ride ride) {
+        UUID passengerExternalId = ride.getPassengerExternalId();
+        PaymentMethodResponse passengerPaymentMethod = passengerClient.findPassengerPaymentMethod(passengerExternalId);
+
+        if (PaymentMethod.CARD.equals(passengerPaymentMethod.paymentMethod())) {
+            DefaultCardResponse defaultCard = cardClient.findDefaultCardByPassengerExternalId(passengerExternalId);
+            sendRequestHandler.sendRidePaymentRequestToKafka(buildRidePaymentMessage(defaultCard, ride));
+        } else {
+            ride.setPaymentMethod(PaymentMethod.CASH);
+            ride.setPaymentStatus(PaymentStatus.PAID);
         }
-        return Mono.error(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE));
     }
 
     private double calculateRideCost(CreateRideRequest createRideRequestDto) {

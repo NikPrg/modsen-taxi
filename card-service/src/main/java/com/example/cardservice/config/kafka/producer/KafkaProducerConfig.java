@@ -1,5 +1,6 @@
 package com.example.cardservice.config.kafka.producer;
 
+import com.example.cardservice.amqp.message.CardInfoMessage;
 import com.example.cardservice.amqp.message.ChangeDefaultPaymentMethodMessage;
 import com.example.cardservice.amqp.message.ErrorInfoMessage;
 import com.example.cardservice.util.KafkaUtils;
@@ -26,9 +27,13 @@ import java.util.Map;
 public class KafkaProducerConfig {
     private static final String PAYMENT_METHOD_INFO_KAFKA_CHANNEL = "paymentMethodInfoKafkaChannel";
     private static final String ERROR_INFO_KAFKA_CHANNEL = "errorInfoKafkaChannel";
+    private static final String CREATE_CARD_INFO_KAFKA_CHANNEL = "createCardInfoKafkaChannel";
 
     @Value("${app.kafka.topic.payment-method-details}")
     private String paymentMethodDetailsTopic;
+
+    @Value("${app.kafka.topic.new-card-details}")
+    private String newCardDetailsTopic;
 
     @Value("${app.kafka.topic.error-card-details}")
     private String errorCardDetailsTopic;
@@ -45,7 +50,12 @@ public class KafkaProducerConfig {
                 .handle(Kafka.outboundChannelAdapter(kafkaTemplate(kafkaProperties))
                         .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
                         .headerMapper(mapper())
-                        .topic(errorCardDetailsTopic));
+                        .topic(errorCardDetailsTopic))
+                .channel(CREATE_CARD_INFO_KAFKA_CHANNEL)
+                .handle(Kafka.outboundChannelAdapter(kafkaTemplate(kafkaProperties))
+                        .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
+                        .headerMapper(mapper())
+                        .topic(newCardDetailsTopic));
     }
 
     @Bean
@@ -74,11 +84,17 @@ public class KafkaProducerConfig {
     }
 
     @Bean
+    public MessageChannel createCardInfoKafkaChannel(){
+        return new DirectChannel();
+    }
+
+    @Bean
     public Map<String, Object> kafkaConfigs(KafkaProperties kafkaProperties) {
         Map<String, Object> producerProperties = kafkaProperties.buildProducerProperties();
         String typeMappings = KafkaUtils.buildTypeMappings(
                 ChangeDefaultPaymentMethodMessage.class,
-                ErrorInfoMessage.class
+                ErrorInfoMessage.class,
+                CardInfoMessage.class
         );
 
         producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);

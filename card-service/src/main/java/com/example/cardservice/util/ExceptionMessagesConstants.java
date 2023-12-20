@@ -10,5 +10,7 @@ public class ExceptionMessagesConstants {
             "Passenger with externalId = %s, has no card with externalId = %s";
     public final String PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE =
             "Passenger was not found by given externalId = %s";
+    public final String DEFAULT_CARD_NOT_FOUND_EXCEPTION_MESSAGE =
+            "Passenger with externalId = %s, has no card as used default";
 
 }

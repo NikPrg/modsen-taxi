@@ -3,6 +3,7 @@ package com.example.ridesservice.amqp.channelGateway;
 import com.example.ridesservice.amqp.handler.SendRequestHandler;
 import com.example.ridesservice.amqp.message.DriverStatusMessage;
 import com.example.ridesservice.amqp.message.RideInfoMessage;
+import com.example.ridesservice.amqp.message.RidePaymentMessage;
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 
@@ -15,4 +16,9 @@ public interface KafkaChannelGateway extends SendRequestHandler {
     @Override
     @Gateway(requestChannel = "driverStatusKafkaChannel")
     void sendDriverStatusRequestToKafka(DriverStatusMessage message);
+
+    @Override
+    @Gateway(requestChannel = "ridePaymentKafkaChannel")
+    void sendRidePaymentRequestToKafka(RidePaymentMessage message);
+
 }

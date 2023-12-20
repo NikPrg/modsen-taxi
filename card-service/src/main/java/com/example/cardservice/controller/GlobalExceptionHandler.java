@@ -2,7 +2,7 @@ package com.example.cardservice.controller;
 
 import com.example.cardservice.dto.response.error.ErrorResponse;
 import com.example.cardservice.exception.EntityAlreadyExistException;
-import com.example.cardservice.exception.PassengerNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,14 +38,14 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(PassengerNotFoundException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handePassengerNotFoundException(PassengerNotFoundException ex) {
+    public ErrorResponse handeEntityNotFoundException(EntityNotFoundException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 
         if (log.isInfoEnabled()) {
-            log.info("Handled passenger not found exception: msg='{}', exceptionId='{}", message, exceptionId);
+            log.info("Handled entity not found exception: msg='{}', exceptionId='{}", message, exceptionId);
         }
 
         return ErrorResponse.builder()

@@ -7,7 +7,7 @@ import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
-import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.dto.response.PaymentMethodResponse;
 import com.example.passengerservice.mapper.PassengerMapper;
 import com.example.passengerservice.model.Passenger;
 import com.example.passengerservice.model.projections.PassengerView;
@@ -127,7 +127,7 @@ public class PassengerServiceImplTest {
 
     @Test
     void findPassengerPaymentInfo_shouldReturnExpectedResponse() {
-        PaymentInfoResponse expected = DataUtil.defaultPaymentInfoResponseCash();
+        PaymentMethodResponse expected = DataUtil.defaultPaymentMethodResponseCash();
         Passenger passenger = DataUtil.defaultPassenger();
 
         doReturn(Optional.of(passenger))
@@ -135,14 +135,14 @@ public class PassengerServiceImplTest {
                 .findByExternalId(DataUtil.PASSENGER_EXTERNAL_ID);
         doReturn(expected)
                 .when(passengerMapper)
-                .toPaymentInfoDto(passenger);
+                .toPaymentMethodDto(passenger);
 
-        PaymentInfoResponse actual = passengerService.findPassengerPaymentInfo(DataUtil.PASSENGER_EXTERNAL_ID);
+        PaymentMethodResponse actual = passengerService.findPassengerPaymentMethod(DataUtil.PASSENGER_EXTERNAL_ID);
 
         assertThat(actual).isEqualTo(expected);
 
         verify(passengerRepository).findByExternalId(DataUtil.PASSENGER_EXTERNAL_ID);
-        verify(passengerMapper).toPaymentInfoDto(passenger);
+        verify(passengerMapper).toPaymentMethodDto(passenger);
     }
 
     @Test

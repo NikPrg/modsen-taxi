@@ -24,4 +24,13 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             """)
     boolean existsCardForPassenger(@Param("cardExternalId") UUID cardExternalId, @Param("passengerExternalId") UUID passengerExternalId);
 
+    @Query(value = """
+            
+            SELECT c
+            FROM Card c
+            JOIN c.passengers pc
+            WHERE pc.usedAsDefault = true AND pc.passenger.externalId = :passengerExternalId
+                        
+            """)
+    Optional<Card> findDefaultCardByPassengerExternalId(@Param("passengerExternalId") UUID passengerExternalId);
 }

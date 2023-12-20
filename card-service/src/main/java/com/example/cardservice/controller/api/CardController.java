@@ -3,6 +3,7 @@ package com.example.cardservice.controller.api;
 import com.example.cardservice.dto.request.CardRegistrationDto;
 import com.example.cardservice.dto.response.AllCardsResponse;
 import com.example.cardservice.dto.response.CreateCardResponse;
+import com.example.cardservice.dto.response.DefaultCardResponse;
 import com.example.cardservice.service.CardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,11 @@ public class CardController {
     @ResponseStatus(HttpStatus.OK)
     public AllCardsResponse findCardsByPassengerExternalId(@PathVariable UUID passengerExternalId) {
         return cardService.findCardsByPassengerExternalId(passengerExternalId);
+    }
+
+    @GetMapping("{passengerExternalId}/cards/default")
+    public DefaultCardResponse findDefaultCardByPassengerExternalId(@PathVariable UUID passengerExternalId) {
+        return cardService.findDefaultCardByPassengerExternalId(passengerExternalId);
     }
 
     @DeleteMapping("{passengerExternalId}/cards/{cardExternalId}")

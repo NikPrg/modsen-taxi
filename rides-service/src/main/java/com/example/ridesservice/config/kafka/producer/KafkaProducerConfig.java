@@ -26,12 +26,16 @@ import java.util.Map;
 public class KafkaProducerConfig {
     private static final String RIDE_INFO_KAFKA_CHANNEL = "rideInfoKafkaChannel";
     private static final String DRIVER_STATUS_KAFKA_CHANNEL = "driverStatusKafkaChannel";
+    private static final String RIDE_PAYMENT_KAFKA_CHANNEL = "ridePaymentKafkaChannel";
 
     @Value("${app.kafka.topic.ride-info-events}")
     private String rideInfoEventsTopic;
 
     @Value("${app.kafka.topic.driver-status-events}")
     private String driverStatusEventsTopic;
+
+    @Value("${app.kafka.topic.ride-payment-events}")
+    private String ridePaymentEventsTopic;
 
     @Bean
     public IntegrationFlow sendToKafkaFlow(KafkaProperties kafkaProperties) {
@@ -45,7 +49,12 @@ public class KafkaProducerConfig {
                 .handle(Kafka.outboundChannelAdapter(kafkaTemplate(kafkaProperties))
                         .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
                         .headerMapper(mapper())
-                        .topic(driverStatusEventsTopic));
+                        .topic(driverStatusEventsTopic))
+                .channel(RIDE_PAYMENT_KAFKA_CHANNEL)
+                .handle(Kafka.outboundChannelAdapter(kafkaTemplate(kafkaProperties))
+                        .messageKey(m -> m.getHeaders().get(IntegrationMessageHeaderAccessor.SEQUENCE_NUMBER))
+                        .headerMapper(mapper())
+                        .topic(ridePaymentEventsTopic));
     }
 
     @Bean
@@ -74,9 +83,17 @@ public class KafkaProducerConfig {
     }
 
     @Bean
+    public MessageChannel ridePaymentKafkaChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
     public Map<String, Object> kafkaConfigs(KafkaProperties kafkaProperties) {
         Map<String, Object> producerProperties = kafkaProperties.buildProducerProperties();
-        String typeMappings = KafkaUtils.buildTypeMappings(RideInfoMessage.class, DriverStatusMessage.class);
+        String typeMappings = KafkaUtils.buildTypeMappings(
+                RideInfoMessage.class,
+                DriverStatusMessage.class
+        );
 
         producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);

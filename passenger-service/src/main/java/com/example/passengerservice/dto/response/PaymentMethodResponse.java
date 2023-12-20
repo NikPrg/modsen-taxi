@@ -4,7 +4,7 @@ import com.example.passengerservice.model.enums.PaymentMethod;
 import lombok.Builder;
 
 @Builder
-public record PaymentInfoResponse(
+public record PaymentMethodResponse(
         PaymentMethod paymentMethod
 ) {
 }

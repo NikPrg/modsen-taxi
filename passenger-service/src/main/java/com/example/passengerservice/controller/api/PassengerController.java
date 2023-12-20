@@ -3,7 +3,7 @@ package com.example.passengerservice.controller.api;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.response.AllPassengersResponse;
 import com.example.passengerservice.dto.response.PassengerResponse;
-import com.example.passengerservice.dto.response.PaymentInfoResponse;
+import com.example.passengerservice.dto.response.PaymentMethodResponse;
 import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
 import com.example.passengerservice.dto.request.PassengerRequest;
 import com.example.passengerservice.dto.response.CreatePassengerResponse;
@@ -50,8 +50,8 @@ public class PassengerController {
 
     @GetMapping("{externalId}/paymentMethod")
     @ResponseStatus(HttpStatus.OK)
-    public PaymentInfoResponse findPassengerPaymentInfo(@PathVariable UUID externalId) {
-        return passengerService.findPassengerPaymentInfo(externalId);
+    public PaymentMethodResponse findPassengerPaymentMethod(@PathVariable UUID externalId) {
+        return passengerService.findPassengerPaymentMethod(externalId);
     }
 
     @GetMapping

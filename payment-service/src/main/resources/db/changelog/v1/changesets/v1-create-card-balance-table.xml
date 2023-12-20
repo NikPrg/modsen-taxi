@@ -1,0 +1,37 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="v1-1-create-card-balance-table" author="Nikita Przhevalski">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="card_balance_id_generator"/>
+                <tableExists tableName="card-balances"/>
+            </not>
+        </preConditions>
+
+        <createSequence sequenceName="card_balance_id_generator" startValue="1" incrementBy="5"/>
+
+        <createTable tableName="card-balances">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="card_external_id" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="balance" type="numeric">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="bigint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <sqlFile dbms="postgresql"
+                     path="db/changelog/v1/sql/v1-drop-card-balance-table.sql"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

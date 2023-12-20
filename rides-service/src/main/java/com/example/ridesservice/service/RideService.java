@@ -1,5 +1,6 @@
 package com.example.ridesservice.service;
 
+import com.example.ridesservice.amqp.message.PaymentInfoMessage;
 import com.example.ridesservice.dto.request.CreateRideRequest;
 import com.example.ridesservice.dto.response.ride.*;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,6 @@ public interface RideService {
     StartRideResponse startRide(UUID driverExternalId, UUID rideExternalId);
 
     FinishRideResponse finishRide(UUID driverExternalId, UUID rideExternalId);
+
+    void handlePaymentResult(PaymentInfoMessage message);
 }

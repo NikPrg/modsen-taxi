@@ -2,18 +2,18 @@ package com.example.ridesservice.util;
 
 import com.example.ridesservice.amqp.message.DriverStatusMessage;
 import com.example.ridesservice.amqp.message.RideInfoMessage;
+import com.example.ridesservice.amqp.message.RidePaymentMessage;
 import com.example.ridesservice.dto.response.ride.AllRidesResponse;
+import com.example.ridesservice.feign.response.DefaultCardResponse;
 import com.example.ridesservice.model.DriverInfo;
 import com.example.ridesservice.model.Ride;
 import com.example.ridesservice.model.projection.RideView;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
 
-@Component
-@RequiredArgsConstructor
+import java.math.BigDecimal;
+
 public class DataComposerUtils {
-    public AllRidesResponse buildAllRidesDto(Page<RideView> allPassengerRidesViews) {
+    public static AllRidesResponse buildAllRidesDto(Page<RideView> allPassengerRidesViews) {
         return AllRidesResponse.builder()
                 .rideViewList(allPassengerRidesViews.getContent())
                 .currentPageNumber(allPassengerRidesViews.getNumber())
@@ -22,7 +22,7 @@ public class DataComposerUtils {
                 .build();
     }
 
-    public RideInfoMessage buildRideInfoMessage(Ride ride) {
+    public static RideInfoMessage buildRideInfoMessage(Ride ride) {
         return RideInfoMessage.builder()
                 .externalId(ride.getExternalId())
                 .pickUpAddress(ride.getPickUpAddress())
@@ -31,10 +31,18 @@ public class DataComposerUtils {
                 .build();
     }
 
-    public DriverStatusMessage buildDriverStatusMessage(DriverInfo driver) {
+    public static DriverStatusMessage buildDriverStatusMessage(DriverInfo driver) {
         return DriverStatusMessage.builder()
                 .driverExternalId(driver.getExternalId())
                 .driverStatus(driver.getDriverStatus())
+                .build();
+    }
+
+    public static RidePaymentMessage buildRidePaymentMessage(DefaultCardResponse defaultCard, Ride ride) {
+        return RidePaymentMessage.builder()
+                .cardExternalId(defaultCard.cardExternalId())
+                .rideExternalId(ride.getExternalId())
+                .rideCost(BigDecimal.valueOf(ride.getRideCost()))
                 .build();
     }
 }
