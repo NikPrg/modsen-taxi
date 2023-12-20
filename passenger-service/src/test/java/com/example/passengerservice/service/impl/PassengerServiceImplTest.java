@@ -39,7 +39,7 @@ import static org.mockito.Mockito.doNothing;
 @ExtendWith(MockitoExtension.class)
 public class PassengerServiceImplTest {
 
-    private ProjectionFactory projectionFactory = new SpelAwareProxyProjectionFactory();
+    private final ProjectionFactory projectionFactory = new SpelAwareProxyProjectionFactory();
 
     @Mock
     private PassengerMapper passengerMapper;

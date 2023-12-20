@@ -37,6 +37,5 @@ public class DriverInfoServiceImpl implements DriverInfoService {
                 .orElseThrow(() -> new EntityNotFoundException(DRIVER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(driverExternalId)));
 
         driverInfoMapper.updateDriver(message.getPayload(), driver);
-
     }
 }

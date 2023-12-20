@@ -110,9 +110,9 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(RideAlreadyFinishedExceptionMessage.class)
+    @ExceptionHandler(RideAlreadyFinishedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handeRideAlreadyFinishedExceptionMessage(RideAlreadyFinishedExceptionMessage ex) {
+    public ErrorResponse handeRideAlreadyFinishedExceptionMessage(RideAlreadyFinishedException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 
@@ -127,9 +127,9 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(RideAlreadyStartedExceptionMessage.class)
+    @ExceptionHandler(RideAlreadyStartedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handeRideAlreadyStartedExceptionMessage(RideAlreadyStartedExceptionMessage ex) {
+    public ErrorResponse handeRideAlreadyStartedExceptionMessage(RideAlreadyStartedException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 
@@ -161,9 +161,9 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(RideNotStartedExceptionMessage.class)
+    @ExceptionHandler(RideNotStartedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handeRideNotStartedExceptionMessage(RideNotStartedExceptionMessage ex) {
+    public ErrorResponse handeRideNotStartedExceptionMessage(RideNotStartedException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
 

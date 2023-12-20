@@ -2,9 +2,9 @@ package com.example.ridesservice.util;
 
 import com.example.ridesservice.exception.DriverNotBelongRideException;
 import com.example.ridesservice.exception.RideNotAcceptedException;
-import com.example.ridesservice.exception.RideAlreadyStartedExceptionMessage;
-import com.example.ridesservice.exception.RideAlreadyFinishedExceptionMessage;
-import com.example.ridesservice.exception.RideNotStartedExceptionMessage;
+import com.example.ridesservice.exception.RideAlreadyStartedException;
+import com.example.ridesservice.exception.RideAlreadyFinishedException;
+import com.example.ridesservice.exception.RideNotStartedException;
 import com.example.ridesservice.model.Ride;
 import com.example.ridesservice.model.enums.RideStatus;
 import org.apache.commons.lang3.ObjectUtils;
@@ -34,11 +34,11 @@ public class RideVerifier {
         }
 
         if (RideStatus.STARTED.equals(ride.getRideStatus())) {
-            throw new RideAlreadyStartedExceptionMessage(RIDE_ALREADY_STARTED_EXCEPTION_MESSAGE.formatted(rideExternalId));
+            throw new RideAlreadyStartedException(RIDE_ALREADY_STARTED_EXCEPTION_MESSAGE.formatted(rideExternalId));
         }
 
         if (RideStatus.FINISHED.equals(ride.getRideStatus())) {
-            throw new RideAlreadyFinishedExceptionMessage(RIDE_ALREADY_FINISHED_EXCEPTION_MESSAGE.formatted(rideExternalId));
+            throw new RideAlreadyFinishedException(RIDE_ALREADY_FINISHED_EXCEPTION_MESSAGE.formatted(rideExternalId));
         }
     }
 
@@ -54,11 +54,11 @@ public class RideVerifier {
         }
 
         if (RideStatus.ACCEPTED.equals(ride.getRideStatus())) {
-            throw new RideNotStartedExceptionMessage(RIDE_NOT_STARTED_EXCEPTION_MESSAGE.formatted(rideExternalId));
+            throw new RideNotStartedException(RIDE_NOT_STARTED_EXCEPTION_MESSAGE.formatted(rideExternalId));
         }
 
         if (RideStatus.FINISHED.equals(ride.getRideStatus())) {
-            throw new RideAlreadyFinishedExceptionMessage(RIDE_ALREADY_FINISHED_EXCEPTION_MESSAGE.formatted(rideExternalId));
+            throw new RideAlreadyFinishedException(RIDE_ALREADY_FINISHED_EXCEPTION_MESSAGE.formatted(rideExternalId));
         }
     }
 }

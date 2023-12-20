@@ -20,6 +20,7 @@ import com.example.ridesservice.model.projection.RideView;
 import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.service.RideService;
+import com.example.ridesservice.util.FakeRideCostGenerator;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +50,8 @@ public class RideServiceImpl implements RideService {
     private final PassengerClient passengerClient;
     private final CardClient cardClient;
     private final RideVerifier rideVerifier;
+    private final FakeRideCostGenerator rideCostGenerator;
 
-    @Value("${app.config.base-cost-per-km}")
-    private int baseCostPerKm;
 
     @Override
     public GetRideResponse findRideByPassengerExternalId(UUID passengerExternalId, UUID rideExternalId) {
@@ -65,14 +65,14 @@ public class RideServiceImpl implements RideService {
     @Transactional(readOnly = true)
     @Override
     public AllRidesResponse findAllPassengerRides(UUID passengerExternalId, Pageable pageable) {
-        Page<RideView> allPassengerRidesViews = rideRepo.findByPassengerExternalId(passengerExternalId, pageable);
+        Page<RideView> allPassengerRidesViews = rideRepo.findAllPassengerRideViews(passengerExternalId, pageable);
         return buildAllRidesDto(allPassengerRidesViews);
     }
 
     @Transactional
     @Override
     public CreateRideResponse bookRide(UUID passengerExternalId, CreateRideRequest createRideDto) {
-        var rideCost = calculateRideCost(createRideDto);
+        var rideCost = rideCostGenerator.calculateRideCost(createRideDto);
         var ride = rideMapper.toRide(createRideDto, passengerExternalId, rideCost);
 
         sendRequestHandler.sendRideInfoRequestToKafka(buildRideInfoMessage(ride));
@@ -160,19 +160,6 @@ public class RideServiceImpl implements RideService {
             ride.setPaymentMethod(PaymentMethod.CASH);
             ride.setPaymentStatus(PaymentStatus.PAID);
         }
-    }
-
-    private double calculateRideCost(CreateRideRequest createRideRequestDto) {
-
-        var pickUpAddress = createRideRequestDto.pickUpAddress();
-        var destinationAddress = createRideRequestDto.destinationAddress();
-        var totalDistance = getTotalDistance(pickUpAddress, destinationAddress);
-
-        return Math.round(totalDistance * baseCostPerKm);
-    }
-
-    private double getTotalDistance(String pickUpAddress, String destinationAddress) {
-        return pickUpAddress.concat(destinationAddress).length() * Math.random() * 3;
     }
 
     private void initiateRideStartActions(Ride ride) {

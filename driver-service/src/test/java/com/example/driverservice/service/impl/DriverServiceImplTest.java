@@ -42,7 +42,6 @@ import static org.mockito.Mockito.doReturn;
 @ExtendWith(MockitoExtension.class)
 public class DriverServiceImplTest {
     private final ProjectionFactory projectionFactory = new SpelAwareProxyProjectionFactory();
-
     @Mock
     private DriverRepository driverRepository;
     @Mock
@@ -54,7 +53,6 @@ public class DriverServiceImplTest {
 
     @InjectMocks
     private DriverServiceImpl driverService;
-
 
     @Test
     void findDriverByExternalId_shouldReturnDriverResponseWithNoCar() {
@@ -141,7 +139,7 @@ public class DriverServiceImplTest {
     void findAllDrivers_shouldReturnEmptyResponse() {
         List<DriverView> driverProjections = Collections.emptyList();
         PageImpl<DriverView> driverViews = new PageImpl<>(driverProjections);
-        AllDriversResponse emptyResponse = new AllDriversResponse(driverProjections, 0, 0, 0);
+        AllDriversResponse emptyResponse = new AllDriversResponse(driverProjections, 0, 1, 0);
         Pageable pageable = Pageable.unpaged();
 
         doReturn(driverViews)
