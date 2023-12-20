@@ -17,6 +17,7 @@ import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.util.DataUtil;
 import com.example.ridesservice.util.FakeRideCostGenerator;
+import com.example.ridesservice.util.FakeRideCostGeneratorImpl;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -119,7 +120,6 @@ public class RideServiceImplTest {
 
         AllRidesResponse actual = rideService.findAllPassengerRides(passengerExternalId, pageable);
 
-        assertThat(actual.totalElements()).isEqualTo(3);
         assertThat(actual).isEqualTo(expected);
 
         verify(rideRepository).findAllPassengerRideViews(eq(passengerExternalId), eq(pageable));
@@ -139,8 +139,6 @@ public class RideServiceImplTest {
 
         AllRidesResponse actual = rideService.findAllPassengerRides(passengerExternalId, pageable);
 
-        assertThat(actual.rideViewList()).isEmpty();
-        assertThat(actual.totalElements()).isEqualTo(0);
         assertThat(actual).isEqualTo(emptyResponse);
 
         verify(rideRepository).findAllPassengerRideViews(eq(passengerExternalId), eq(pageable));
@@ -170,7 +168,6 @@ public class RideServiceImplTest {
         CreateRideResponse actual = rideService.bookRide(passengerExternalId, request);
 
         assertThat(actual).isEqualTo(expected);
-        assertThat(actual.rideStatus()).isEqualTo(DataUtil.RIDE_STATUS_INITIATED);
 
         verify(rideCostGenerator).calculateRideCost(eq(request));
         verify(rideMapper).toRide(eq(request), eq(passengerExternalId), eq(DataUtil.RIDE_COST));
@@ -206,7 +203,6 @@ public class RideServiceImplTest {
         AcceptRideResponse actual = rideService.acceptRide(driverInfoExternalId, rideExternalId);
 
         assertThat(actual).isEqualTo(expected);
-        assertThat(actual.rideStatus()).isEqualTo(DataUtil.RIDE_STATUS_ACCEPTED);
 
         verify(rideRepository).findByExternalId(eq(rideExternalId));
         verify(rideVerifier).verifyAcceptPossibility(eq(ride));
@@ -430,7 +426,6 @@ public class RideServiceImplTest {
         FinishRideResponse actual = rideService.finishRide(driverInfoExternalId, rideExternalId);
 
         assertThat(actual).isEqualTo(expected);
-        assertThat(actual.rideStatus()).isEqualTo(DataUtil.RIDE_STATUS_FINISHED);
 
         verify(rideRepository).findByExternalId(eq(rideExternalId));
         verify(rideVerifier).verifyFinishPossibility(eq(ride), eq(driverInfoExternalId));

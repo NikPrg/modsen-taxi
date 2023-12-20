@@ -173,7 +173,6 @@ public class PassengerServiceImplTest {
 
         AllPassengersResponse actual = passengerService.findAllPassengers(pageable);
 
-        assertThat(actual.totalElements()).isEqualTo(3);
         assertThat(actual).isEqualTo(expected);
 
         verify(passengerRepository).findAllPassengersView(pageable);

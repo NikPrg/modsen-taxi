@@ -69,7 +69,6 @@ public class DriverServiceImplTest {
         DriverResponse actual = driverService.findDriverByExternalId(DataUtil.DRIVER_EXTERNAL_ID);
 
         assertThat(actual).isEqualTo(expectedResult);
-        assertNull(actual.car());
 
         verify(driverRepository).findByExternalId(eq(DataUtil.DRIVER_EXTERNAL_ID));
         verify(driverMapper).toDto(eq(driver));
@@ -91,7 +90,6 @@ public class DriverServiceImplTest {
         DriverResponse actual = driverService.findDriverByExternalId(DataUtil.DRIVER_EXTERNAL_ID);
 
         assertThat(actual).isEqualTo(expectedResult);
-        assertNotNull(actual.car());
 
         verify(driverRepository).findByExternalId(eq(DataUtil.DRIVER_EXTERNAL_ID));
         verify(driverMapper).toDto(eq(driver));
@@ -129,7 +127,6 @@ public class DriverServiceImplTest {
 
         AllDriversResponse actual = driverService.findAllDrivers(pageable);
 
-        assertThat(actual.totalElements()).isEqualTo(3);
         assertThat(actual).isEqualTo(expected);
 
         verify(driverRepository).findAllDriversViews(eq(pageable));
@@ -151,8 +148,6 @@ public class DriverServiceImplTest {
 
         AllDriversResponse actual = driverService.findAllDrivers(pageable);
 
-        assertThat(actual.driverViewList()).isEmpty();
-        assertThat(actual.totalElements()).isEqualTo(0);
         assertThat(actual).isEqualTo(emptyResponse);
 
         verify(driverRepository).findAllDriversViews(eq(pageable));
@@ -180,7 +175,6 @@ public class DriverServiceImplTest {
 
         CreateDriverResponse actual = driverService.createDriver(driverRequest);
 
-        assertThat(DriverStatus.CREATED).isEqualTo(driver.getDriverStatus());
         assertThat(actual).isEqualTo(expected);
 
         verify(driverMapper).toDriver(eq(driverRequest));

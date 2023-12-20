@@ -179,7 +179,6 @@ public class CardServiceImplTest {
         AllCardsResponse actual = cardService.findCardsByPassengerExternalId(DataUtil.PASSENGER_INFO_EXTERNAL_ID);
 
         assertThat(actual).isEqualTo(expected);
-        assertThat(actual.cards()).isEmpty();
 
         verify(passengerInfoRepository).findByExternalIdFetch(eq(DataUtil.PASSENGER_INFO_EXTERNAL_ID));
     }

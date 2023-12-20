@@ -189,8 +189,6 @@ public class CarServiceImplTest {
 
         AllCarsResponse actual = carService.findAllCars(pageable);
 
-        assertThat(actual.carViewList()).isEmpty();
-        assertThat(actual.totalElements()).isEqualTo(0);
         assertThat(actual).isEqualTo(emptyResponse);
 
         verify(carRepository).findAllCarsViews(eq(pageable));

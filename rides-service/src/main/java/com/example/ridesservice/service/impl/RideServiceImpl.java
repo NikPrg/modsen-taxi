@@ -21,11 +21,11 @@ import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.service.RideService;
 import com.example.ridesservice.util.FakeRideCostGenerator;
+import com.example.ridesservice.util.FakeRideCostGeneratorImpl;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -49,8 +49,8 @@ public class RideServiceImpl implements RideService {
     private final SendRequestHandler sendRequestHandler;
     private final PassengerClient passengerClient;
     private final CardClient cardClient;
-    private final RideVerifier rideVerifier;
     private final FakeRideCostGenerator rideCostGenerator;
+    private final RideVerifier rideVerifier;
 
 
     @Override
