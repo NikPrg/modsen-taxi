@@ -35,6 +35,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.NOT_FOUND.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -55,6 +56,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -72,6 +74,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -89,6 +92,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -106,6 +110,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.NOT_FOUND.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -123,6 +128,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -140,6 +146,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -157,6 +164,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -174,6 +182,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }

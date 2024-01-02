@@ -29,25 +29,25 @@ public class CardController {
 
     private final CardService cardService;
 
-    @PostMapping("{passengerExternalId}/cards")
+    @PostMapping(PASSENGER_EXTERNAL_ID_CARDS)
     @ResponseStatus(HttpStatus.CREATED)
     public CreateCardResponse createCard(@PathVariable UUID passengerExternalId,
                                          @RequestBody @Valid CardRegistrationDto cardDto) {
         return cardService.create(cardDto, passengerExternalId);
     }
 
-    @GetMapping("{passengerExternalId}/cards")
+    @GetMapping(PASSENGER_EXTERNAL_ID_CARDS)
     @ResponseStatus(HttpStatus.OK)
     public AllCardsResponse findCardsByPassengerExternalId(@PathVariable UUID passengerExternalId) {
         return cardService.findCardsByPassengerExternalId(passengerExternalId);
     }
 
-    @GetMapping("{passengerExternalId}/cards/default")
+    @GetMapping(PASSENGER_EXTERNAL_ID_CARDS_DEFAULT)
     public DefaultCardResponse findDefaultCardByPassengerExternalId(@PathVariable UUID passengerExternalId) {
         return cardService.findDefaultCardByPassengerExternalId(passengerExternalId);
     }
 
-    @DeleteMapping("{passengerExternalId}/cards/{cardExternalId}")
+    @DeleteMapping(PASSENGER_EXTERNAL_ID_CARDS_CARD_EXTERNAL_ID)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePassengerCard(@PathVariable UUID passengerExternalId,
                                     @PathVariable UUID cardExternalId) {

@@ -80,7 +80,7 @@ public class CarServiceImpl implements CarService {
         var car = driver.getCar();
 
         if (ObjectUtils.isEmpty(car)) {
-            throw new DriverCarNotFoundException(DRIVER_HAS_NO_CARS_EXCEPTION_MESSAGE.formatted(driverExternalId));
+            throw new DriverCarNotFoundException(DRIVER_HAS_NO_CAR_EXCEPTION_MESSAGE.formatted(driverExternalId));
         }
 
         carMapper.updateCar(updateCarRequest, car);

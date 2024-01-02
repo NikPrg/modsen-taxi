@@ -29,15 +29,22 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
-
 	implementation 'org.liquibase:liquibase-core'
 	implementation 'org.springframework.cloud:spring-cloud-stream'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
+
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:kafka'
+	testImplementation 'org.testcontainers:postgresql'
+	testImplementation 'io.rest-assured:rest-assured'
 }
 
 dependencyManagement {

@@ -1,6 +1,8 @@
 package com.example.passengerservice.util;
 
+import com.example.passengerservice.amqp.message.ChangeCardUsedAsDefaultMessage;
 import com.example.passengerservice.amqp.message.NewPassengerInfoMessage;
+import com.example.passengerservice.amqp.message.RemovePassengerInfoMessage;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
 import com.example.passengerservice.dto.request.PassengerRequest;
@@ -17,6 +19,7 @@ import java.util.UUID;
 public class DataUtil {
     public static final Long PASSENGER_ID = 1L;
     public static final UUID PASSENGER_EXTERNAL_ID = UUID.randomUUID();
+    public static final UUID CARD_EXTERNAL_ID = UUID.randomUUID();
     public static final String FIRST_NAME = "Nikita";
     public static final String LAST_NAME = "Przhevalsky";
     public static final String PHONE = "+375259998881";
@@ -29,6 +32,8 @@ public class DataUtil {
     public static final String NEW_FIRST_NAME = "Vlad";
     public static final String NEW_LAST_NAME = "Veremeter";
     public static final String NEW_PHONE = "+375257778881";
+
+    public static final UUID NOT_EXISTED_EXTERNAL_ID = UUID.randomUUID();
 
     public static Passenger defaultPassenger() {
         return Passenger.builder()
@@ -126,6 +131,20 @@ public class DataUtil {
     public static ChangePhoneRequest defaultChangePhoneRequest() {
         return ChangePhoneRequest.builder()
                 .phone(NEW_PHONE)
+                .build();
+    }
+
+    public static ChangeCardUsedAsDefaultMessage defaultChangeCardUsedAsDefaultMessage() {
+        return ChangeCardUsedAsDefaultMessage.builder()
+                .cardExternalId(CARD_EXTERNAL_ID)
+                .passengerExternalId(PASSENGER_EXTERNAL_ID)
+                .paymentMethod(PAYMENT_METHOD_CARD)
+                .build();
+    }
+
+    public static RemovePassengerInfoMessage defaultRemovePassengerInfoMessage() {
+        return RemovePassengerInfoMessage.builder()
+                .passengerExternalId(PASSENGER_EXTERNAL_ID)
                 .build();
     }
 }

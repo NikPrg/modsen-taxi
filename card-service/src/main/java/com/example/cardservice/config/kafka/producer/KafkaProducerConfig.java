@@ -29,6 +29,9 @@ public class KafkaProducerConfig {
     private static final String ERROR_INFO_KAFKA_CHANNEL = "errorInfoKafkaChannel";
     private static final String CREATE_CARD_INFO_KAFKA_CHANNEL = "createCardInfoKafkaChannel";
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
     @Value("${app.kafka.topic.payment-method-details}")
     private String paymentMethodDetailsTopic;
 
@@ -84,7 +87,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public MessageChannel createCardInfoKafkaChannel(){
+    public MessageChannel createCardInfoKafkaChannel() {
         return new DirectChannel();
     }
 
@@ -97,6 +100,7 @@ public class KafkaProducerConfig {
                 CardInfoMessage.class
         );
 
+        producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         producerProperties.put(JsonSerializer.TYPE_MAPPINGS, typeMappings);

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public record ErrorResponse(
         String id,
         String message,
+        int statusCode,
         LocalDateTime timestamp
 ) {
 }

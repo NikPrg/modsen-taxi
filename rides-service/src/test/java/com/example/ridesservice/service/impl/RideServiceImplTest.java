@@ -6,7 +6,6 @@ import com.example.ridesservice.amqp.message.RideInfoMessage;
 import com.example.ridesservice.dto.request.CreateRideRequest;
 import com.example.ridesservice.dto.response.ride.*;
 import com.example.ridesservice.exception.*;
-import com.example.ridesservice.feign.client.CardClient;
 import com.example.ridesservice.feign.client.PassengerClient;
 import com.example.ridesservice.feign.response.PaymentMethodResponse;
 import com.example.ridesservice.mapper.RideMapper;
@@ -17,7 +16,6 @@ import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.util.DataUtil;
 import com.example.ridesservice.util.FakeRideCostGenerator;
-import com.example.ridesservice.util.FakeRideCostGeneratorImpl;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -56,8 +54,6 @@ public class RideServiceImplTest {
     private SendRequestHandler sendRequestHandler;
     @Mock
     private PassengerClient passengerClient;
-    @Mock
-    private CardClient cardClient;
     @Mock
     private RideVerifier rideVerifier;
     @Mock

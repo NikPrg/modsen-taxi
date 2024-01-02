@@ -40,10 +40,10 @@ public class DriverController {
         return driverService.createDriver(createDriverRequest);
     }
 
-    @GetMapping("{externalId}")
+    @GetMapping(DRIVER_EXTERNAL_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
-    public DriverResponse findDriverByExternalId(@PathVariable UUID externalId) {
-        return driverService.findDriverByExternalId(externalId);
+    public DriverResponse findDriverByExternalId(@PathVariable UUID driverExternalId) {
+        return driverService.findDriverByExternalId(driverExternalId);
     }
 
     @GetMapping
@@ -53,17 +53,17 @@ public class DriverController {
         return driverService.findAllDrivers(pageable);
     }
 
-    @PutMapping("{externalId}")
+    @PutMapping(DRIVER_EXTERNAL_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
-    public DriverResponse updateDriver(@PathVariable UUID externalId,
+    public DriverResponse updateDriver(@PathVariable UUID driverExternalId,
                                        @RequestBody @Valid UpdateDriverRequest updateDriverRequest) {
-        return driverService.updateDriver(externalId, updateDriverRequest);
+        return driverService.updateDriver(driverExternalId, updateDriverRequest);
     }
 
-    @DeleteMapping("{externalId}")
+    @DeleteMapping(DRIVER_EXTERNAL_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteDriver(@PathVariable UUID externalId) {
-        driverService.deleteDriver(externalId);
+    public void deleteDriver(@PathVariable UUID driverExternalId) {
+        driverService.deleteDriver(driverExternalId);
     }
 
 }

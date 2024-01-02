@@ -26,6 +26,7 @@ ext {
     lombokVersion = "1.18.30"
     lombokMapstructBindingVersion = "0.2.0"
     springIntegrationVersion = "6.2.0"
+    cucumberVersion = "7.14.0"
 }
 
 dependencies {
@@ -38,16 +39,28 @@ dependencies {
     implementation 'org.liquibase:liquibase-core'
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'org.projectlombok:lombok:1.18.28'
+
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
+
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
     annotationProcessor "org.projectlombok:lombok-mapstruct-binding:${lombokMapstructBindingVersion}"
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.integration:spring-integration-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:kafka'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-spring:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-core:${cucumberVersion}"
 }
 
 tasks.named('bootBuildImage') {

@@ -17,21 +17,21 @@ public interface PassengerService {
 
     CreatePassengerResponse signUp(PassengerRegistrationRequest passengerDto);
 
-    PassengerResponse findPassengerByExternalId(UUID externalId);
+    PassengerResponse findPassengerByExternalId(UUID passengerExternalId);
 
-    PaymentMethodResponse findPassengerPaymentMethod(UUID externalId);
+    PaymentMethodResponse findPassengerPaymentMethod(UUID passengerExternalId);
 
     AllPassengersResponse findAllPassengers(Pageable pageable);
 
-    PassengerResponse update(UUID externalId, PassengerRequest passengerDto);
+    PassengerResponse update(UUID passengerExternalId, PassengerRequest passengerDto);
 
     void addCardAsDefaultPaymentMethod(UUID passengerExternalId, UUID cardExternalId);
 
-    void addCashAsDefaultPaymentMethod(UUID externalId);
+    void addCashAsDefaultPaymentMethod(UUID passengerExternalId);
 
-    void delete(UUID externalId);
+    void delete(UUID passengerExternalId);
 
-    void updatePassengerPhone(UUID externalId, ChangePhoneRequest changePhoneRequest);
+    void updatePassengerPhone(UUID passengerExternalId, ChangePhoneRequest changePhoneRequest);
 
     void updateDefaultPaymentMethod(ChangeDefaultPaymentMethodMessage message);
 

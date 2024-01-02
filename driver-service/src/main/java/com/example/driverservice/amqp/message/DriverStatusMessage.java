@@ -10,5 +10,6 @@ import java.util.UUID;
 public record DriverStatusMessage(
         UUID driverExternalId,
         DriverStatus driverStatus
+
 ) implements Serializable {
 }
