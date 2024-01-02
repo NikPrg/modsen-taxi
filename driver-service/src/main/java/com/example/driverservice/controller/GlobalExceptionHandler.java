@@ -35,6 +35,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.NOT_FOUND.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -55,6 +56,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
@@ -72,12 +74,13 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.NOT_FOUND.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
 
     @ExceptionHandler(DriverAlreadyHasCarException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeDriverAlreadyHasCarException(DriverAlreadyHasCarException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
@@ -89,12 +92,13 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
 
     @ExceptionHandler(CarNotBelongDriverException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handeCarNotBelongDriverException(CarNotBelongDriverException ex) {
         val exceptionId = UUID.randomUUID().toString();
         val message = ex.getMessage();
@@ -106,6 +110,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .id(exceptionId)
                 .message(message)
+                .statusCode(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
                 .build();
     }

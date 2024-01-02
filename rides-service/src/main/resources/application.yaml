@@ -25,11 +25,9 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
-    producer:
-      bootstrap-servers: localhost:9092
     consumer:
-      bootstrap-servers: localhost:9092
       group-id: rides-service-group
+      auto-offset-reset: earliest
 
 app:
   config:
@@ -56,4 +54,3 @@ app:
           base-url: localhost:8083
           routes:
             get-default-card: /public/api/v1/passengers/{passengerExternalId}/cards/default
-

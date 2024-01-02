@@ -43,6 +43,9 @@ public class DataUtil {
     public static final String CAR_COLOR = "red";
     public static final LocalDateTime CAR_CREATED_AT = LocalDateTime.now();
 
+    public static final UUID NOT_EXISTED_EXTERNAL_ID = UUID.randomUUID();
+
+
     public static Driver defaultDriverWithNoCarStatus(){
         return Driver.builder()
                 .id(DRIVER_ID)

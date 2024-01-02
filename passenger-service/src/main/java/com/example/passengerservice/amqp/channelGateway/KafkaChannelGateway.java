@@ -11,7 +11,7 @@ import org.springframework.integration.annotation.MessagingGateway;
 public interface KafkaChannelGateway extends SendRequestHandler {
     @Override
     @Gateway(requestChannel = "cardInfoKafkaChannel")
-    void sendCardUsedAsDefaultChangeRequestToKafka(ChangeCardUsedAsDefaultMessage message);
+    void sendDefaultCardChangeRequest(ChangeCardUsedAsDefaultMessage message);
 
     @Override
     @Gateway(requestChannel = "createPassengerInfoKafkaChannel")

@@ -28,6 +28,9 @@ public class KafkaProducerConfig {
     @Value("${app.kafka.topic.driver-info-events}")
     private String driverInfoEventsTopic;
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
     @Bean
     public IntegrationFlow sendToKafkaFlow(KafkaProperties kafkaProperties) {
         return f -> f
@@ -63,6 +66,7 @@ public class KafkaProducerConfig {
         Map<String, Object> producerProperties = kafkaProperties.buildProducerProperties();
         String typeMappings = KafkaUtils.buildTypeMappings(DriverInfoMessage.class);
 
+        producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         producerProperties.put(JsonSerializer.TYPE_MAPPINGS, typeMappings);

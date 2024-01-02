@@ -38,6 +38,7 @@ public class DriverServiceImpl implements DriverService {
     private final SendRequestHandler sendRequestHandler;
     private final WebClient webClient;
     private final DataComposerUtils dataComposerUtils;
+
     @Value("${app.routes.rides.accept-ride-method}")
     private String ridesAcceptRideMethodUri;
 

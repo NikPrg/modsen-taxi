@@ -41,6 +41,8 @@ public class DataUtil {
     public static final DriverStatus DRIVER_INFO_STATUS_AVAILABLE = DriverStatus.AVAILABLE;
     public static final DriverStatus DRIVER_INFO_STATUS_UNAVAILABLE = DriverStatus.UNAVAILABLE;
 
+    public static final UUID NOT_EXISTED_EXTERNAL_ID = UUID.randomUUID();
+
     public static Ride defaultFinishedRideCash() {
         return Ride.builder()
                 .id(RIDE_ID)

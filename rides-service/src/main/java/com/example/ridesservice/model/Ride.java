@@ -62,7 +62,7 @@ public class Ride {
 
     private LocalTime rideStartedAt;
 
-    private long rideDuration;
+    private Long rideDuration;
 
     @CreationTimestamp
     private LocalDateTime rideCreatedAt;
