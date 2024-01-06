@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.UUID;
 
-@FeignClient(name = "${app.api.feign.clients.driver.name}", url = "${app.api.feign.clients.driver.base-url}")
+@FeignClient(value = "${app.api.feign.clients.driver.name}")
 public interface DriverClient {
-
     @GetMapping("${app.api.feign.clients.driver.routes.find-driver-by-external-id}")
     @ResponseStatus(HttpStatus.OK)
     DriverResponse findDriverByExternalId(@PathVariable UUID driverExternalId);
