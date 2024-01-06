@@ -1,4 +1,4 @@
-package com.example.ridesservice.dto.response;
+package com.example.e2eservice.feign.response.rides;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

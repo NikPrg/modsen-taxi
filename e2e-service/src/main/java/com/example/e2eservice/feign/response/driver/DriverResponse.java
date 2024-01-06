@@ -1,6 +1,6 @@
-package com.example.driverservice.dto.response;
+package com.example.e2eservice.feign.response.driver;
 
-import com.example.driverservice.model.enums.DriverStatus;
+import com.example.e2eservice.entity.DriverStatus;
 import lombok.Builder;
 
 import java.util.UUID;
