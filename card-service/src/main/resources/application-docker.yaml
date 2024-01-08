@@ -1,0 +1,55 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: card-service
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+    enabled: true
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/taxi-cards
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        generate_statistics: false
+        format_sql: false
+        show_sql: false
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: card-service-group
+      auto-offset-reset: earliest
+
+  messages:
+    basename: messages-constants
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eurekaservice:8761/eureka/
+
+app:
+  kafka:
+    topic:
+      payment-method-details: payment-method-details
+      card-default-status-details: card-default-status-details
+      new-passenger-details: new-passenger-details
+      removed-passenger-details: removed-passenger-details
+      new-card-details: new-card-details
+      error-card-details: error-card-details
+
+logging:
+  level:
+    web: INFO
