@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: e2e-service
+
+app:
+  api:
+    feign:
+      clients:
+        rides:
+          name: rides-service
+          base-url: localhost:8082
+          routes:
+            book-ride: /public/api/v1/rides/passengers/{passengerExternalId}
+            start-ride: /public/api/v1/rides/{rideExternalId}/drivers/{driverExternalId}/start
+            finish-ride: /public/api/v1/rides/{rideExternalId}/drivers/{driverExternalId}/finish
+            find-ride-by-passenger-external-id: /public/api/v1/rides/{rideExternalId}/passengers/{passengerExternalId}
+        driver:
+          name: driver-service
+          base-url: localhost:8081
+          routes:
+            find-driver-by-external-id: /public/api/v1/drivers/{driverExternalId}

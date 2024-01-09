@@ -77,7 +77,7 @@ public class DataUtil {
     }
 
     public static DriverInfoResponse defaultDriverInfoResponse() {
-        return new DriverInfoResponse(DRIVER_INFO_FIRST_NAME, DRIVER_INFO_LAST_NAME, null);
+        return new DriverInfoResponse(null, DRIVER_INFO_FIRST_NAME, DRIVER_INFO_LAST_NAME, null);
     }
 
     public static PaymentMethodResponse defaultPaymentMethodResponseCash() {

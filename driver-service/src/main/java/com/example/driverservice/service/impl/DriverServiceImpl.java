@@ -122,7 +122,7 @@ public class DriverServiceImpl implements DriverService {
         UUID rideExternalId = rideInfoMessage.externalId();
         UUID driverExternalId = driver.getExternalId();
 
-        webClient.post()
+        webClient.put()
                 .uri(ridesAcceptRideMethodUri, rideExternalId, driverExternalId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()
