@@ -38,7 +38,7 @@ dependencies {
     implementation "org.springframework.integration:spring-integration-http:${springIntegrationVersion}"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation 'org.liquibase:liquibase-core'
-    testImplementation 'org.projectlombok:lombok:1.18.28'
+    testImplementation "org.projectlombok:lombok:${lombokVersion}"
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
 
