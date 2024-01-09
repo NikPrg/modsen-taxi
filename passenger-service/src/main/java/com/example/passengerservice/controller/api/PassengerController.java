@@ -42,16 +42,16 @@ public class PassengerController {
         return passengerService.signUp(passengerDto);
     }
 
-    @GetMapping("{externalId}")
+    @GetMapping(PASSENGER_EXTERNAL_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
-    public PassengerResponse findPassengerByExternalId(@PathVariable UUID externalId) {
-        return passengerService.findPassengerByExternalId(externalId);
+    public PassengerResponse findPassengerByExternalId(@PathVariable UUID passengerExternalId) {
+        return passengerService.findPassengerByExternalId(passengerExternalId);
     }
 
-    @GetMapping("{externalId}/paymentMethod")
+    @GetMapping(PASSENGER_EXTERNAL_ID_PAYMENT_METHOD_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
-    public PaymentMethodResponse findPassengerPaymentMethod(@PathVariable UUID externalId) {
-        return passengerService.findPassengerPaymentMethod(externalId);
+    public PaymentMethodResponse findPassengerPaymentMethod(@PathVariable UUID passengerExternalId) {
+        return passengerService.findPassengerPaymentMethod(passengerExternalId);
     }
 
     @GetMapping
@@ -61,36 +61,36 @@ public class PassengerController {
         return passengerService.findAllPassengers(pageable);
     }
 
-    @PutMapping("{externalId}")
+    @PutMapping(PASSENGER_EXTERNAL_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
-    public PassengerResponse updatePassenger(@PathVariable UUID externalId,
+    public PassengerResponse updatePassenger(@PathVariable UUID passengerExternalId,
                                              @RequestBody @Valid PassengerRequest dto) {
-        return passengerService.update(externalId, dto);
+        return passengerService.update(passengerExternalId, dto);
     }
 
-    @PatchMapping("{externalId}/phone")
+    @PatchMapping(PASSENGER_EXTERNAL_ID_PHONE_ENDPOINT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updatePassengerPhone(@PathVariable UUID externalId,
+    public void updatePassengerPhone(@PathVariable UUID passengerExternalId,
                                      @RequestBody @Valid ChangePhoneRequest changePhoneRequest) {
-        passengerService.updatePassengerPhone(externalId, changePhoneRequest);
+        passengerService.updatePassengerPhone(passengerExternalId, changePhoneRequest);
     }
 
-    @PatchMapping("{passengerExternalId}/cards/{cardExternalId}")
+    @PutMapping(PASSENGER_EXT_ID_CARDS_CARD_EXT_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addCardAsDefaultPaymentMethod(@PathVariable UUID passengerExternalId,
                                               @PathVariable UUID cardExternalId) {
         passengerService.addCardAsDefaultPaymentMethod(passengerExternalId, cardExternalId);
     }
 
-    @PatchMapping("{externalId}/cash")
+    @PutMapping(PASSENGER_EXTERNAL_ID_CASH_ENDPOINT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void addCashAsDefaultPaymentMethod(@PathVariable UUID externalId) {
-        passengerService.addCashAsDefaultPaymentMethod(externalId);
+    public void addCashAsDefaultPaymentMethod(@PathVariable UUID passengerExternalId) {
+        passengerService.addCashAsDefaultPaymentMethod(passengerExternalId);
     }
 
-    @DeleteMapping("{externalId}")
+    @DeleteMapping(PASSENGER_EXTERNAL_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePassenger(@PathVariable UUID externalId) {
-        passengerService.delete(externalId);
+    public void deletePassenger(@PathVariable UUID passengerExternalId) {
+        passengerService.delete(passengerExternalId);
     }
 }

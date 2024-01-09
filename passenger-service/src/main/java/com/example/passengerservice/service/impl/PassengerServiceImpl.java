@@ -1,7 +1,11 @@
 package com.example.passengerservice.service.impl;
 
 import com.example.passengerservice.amqp.handler.SendRequestHandler;
-import com.example.passengerservice.amqp.message.*;
+import com.example.passengerservice.amqp.message.NewPassengerInfoMessage;
+import com.example.passengerservice.amqp.message.RemovePassengerInfoMessage;
+import com.example.passengerservice.amqp.message.ChangeCardUsedAsDefaultMessage;
+import com.example.passengerservice.amqp.message.ErrorInfoMessage;
+import com.example.passengerservice.amqp.message.ChangeDefaultPaymentMethodMessage;
 import com.example.passengerservice.dto.request.ChangePhoneRequest;
 import com.example.passengerservice.dto.request.PassengerRegistrationRequest;
 import com.example.passengerservice.dto.request.PassengerRequest;
@@ -47,16 +51,16 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse findPassengerByExternalId(UUID externalId) {
-        val passenger = passengerRepo.findByExternalId(externalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
+    public PassengerResponse findPassengerByExternalId(UUID passengerExternalId) {
+        val passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
         return passengerMapper.toDto(passenger);
     }
 
     @Override
-    public PaymentMethodResponse findPassengerPaymentMethod(UUID externalId) {
-        val passenger = passengerRepo.findByExternalId(externalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
+    public PaymentMethodResponse findPassengerPaymentMethod(UUID passengerExternalId) {
+        val passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
         return passengerMapper.toPaymentMethodDto(passenger);
     }
 
@@ -69,21 +73,21 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Transactional
     @Override
-    public PassengerResponse update(UUID externalId, PassengerRequest passengerDto) {
-        var passenger = passengerRepo.findByExternalId(externalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
+    public PassengerResponse update(UUID passengerExternalId, PassengerRequest passengerDto) {
+        var passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
         passengerMapper.updatePassenger(passengerDto, passenger);
         return passengerMapper.toDto(passenger);
     }
 
     @Transactional
     @Override
-    public void updatePassengerPhone(UUID externalId, ChangePhoneRequest changePhoneRequest) {
+    public void updatePassengerPhone(UUID passengerExternalId, ChangePhoneRequest changePhoneRequest) {
         var updatedPhone = changePhoneRequest.phone();
 
         checkPhoneForUniqueness(updatedPhone);
-        var passenger = passengerRepo.findByExternalId(externalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
+        var passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         passenger.setPhone(updatedPhone);
         passengerRepo.save(passenger);
@@ -110,7 +114,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .paymentMethod(PaymentMethod.CARD)
                 .build();
 
-        sendRequestHandler.sendCardUsedAsDefaultChangeRequestToKafka(message);
+        sendRequestHandler.sendDefaultCardChangeRequest(message);
 
         passenger.setDefaultPaymentMethod(PaymentMethod.CARD);
         passengerRepo.save(passenger);
@@ -118,16 +122,16 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Transactional
     @Override
-    public void addCashAsDefaultPaymentMethod(UUID externalId) {
-        var passenger = passengerRepo.findByExternalId(externalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
+    public void addCashAsDefaultPaymentMethod(UUID passengerExternalId) {
+        var passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         var message = ChangeCardUsedAsDefaultMessage.builder()
-                .passengerExternalId(externalId)
+                .passengerExternalId(passengerExternalId)
                 .paymentMethod(PaymentMethod.CASH)
                 .build();
 
-        sendRequestHandler.sendCardUsedAsDefaultChangeRequestToKafka(message);
+        sendRequestHandler.sendDefaultCardChangeRequest(message);
 
         passenger.setDefaultPaymentMethod(PaymentMethod.CASH);
         passengerRepo.save(passenger);
@@ -135,9 +139,9 @@ public class PassengerServiceImpl implements PassengerService {
 
     @Transactional
     @Override
-    public void delete(UUID externalId) {
-        var passenger = passengerRepo.findByExternalId(externalId)
-                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(externalId)));
+    public void delete(UUID passengerExternalId) {
+        var passenger = passengerRepo.findByExternalId(passengerExternalId)
+                .orElseThrow(() -> new EntityNotFoundException(PASSENGER_NOT_FOUND_EXCEPTION_MESSAGE.formatted(passengerExternalId)));
 
         sendRequestHandler.sendPassengerRemovalToKafka(buildRemovePassengerInfoMessage(passenger));
 

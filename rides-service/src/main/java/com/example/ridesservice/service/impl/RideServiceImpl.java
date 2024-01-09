@@ -21,7 +21,6 @@ import com.example.ridesservice.repository.DriverInfoRepository;
 import com.example.ridesservice.repository.RideRepository;
 import com.example.ridesservice.service.RideService;
 import com.example.ridesservice.util.FakeRideCostGenerator;
-import com.example.ridesservice.util.FakeRideCostGeneratorImpl;
 import com.example.ridesservice.util.RideVerifier;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,6 @@ import static com.example.ridesservice.util.DataComposerUtils.*;
 import static com.example.ridesservice.util.ExceptionMessagesConstants.*;
 import static java.time.temporal.ChronoUnit.MINUTES;
 
-
 @Service
 @RequiredArgsConstructor
 public class RideServiceImpl implements RideService {
@@ -51,7 +49,6 @@ public class RideServiceImpl implements RideService {
     private final CardClient cardClient;
     private final FakeRideCostGenerator rideCostGenerator;
     private final RideVerifier rideVerifier;
-
 
     @Override
     public GetRideResponse findRideByPassengerExternalId(UUID passengerExternalId, UUID rideExternalId) {

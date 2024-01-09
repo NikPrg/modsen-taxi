@@ -31,6 +31,15 @@ public class KafkaConsumerConfig {
     private final CardService cardService;
     private final PassengerInfoService passengerInfoService;
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
+    @Value("${spring.kafka.consumer.group-id}")
+    private String consumerGroup;
+
+    @Value("${spring.kafka.consumer.auto-offset-reset}")
+    private String autoOffsetReset;
+
     @Value("${app.kafka.topic.card-default-status-details}")
     private String cardDefaultStatusDetailsTopic;
 
@@ -74,8 +83,11 @@ public class KafkaConsumerConfig {
                 RemovePassengerInfoMessage.class
         );
 
+        consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroup);
         consumerProperties.put(JsonDeserializer.TYPE_MAPPINGS, typeMappings);
 
         return consumerProperties;

@@ -31,6 +31,15 @@ public class KafkaConsumerConfig {
     @Value("${app.kafka.topic.driver-status-events}")
     private String driverStatusEventsTopic;
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
+    @Value("${spring.kafka.consumer.group-id}")
+    private String consumerGroup;
+
+    @Value("${spring.kafka.consumer.auto-offset-reset}")
+    private String autoOffsetReset;
+
     @Bean
     public IntegrationFlow consumeNotificationFromKafka(ConsumerFactory<String, String> consumerFactory) {
         return IntegrationFlow.from(Kafka.messageDrivenChannelAdapter(consumerFactory, rideInfoEventsTopic))
@@ -53,10 +62,16 @@ public class KafkaConsumerConfig {
     @Bean
     public Map<String, Object> consumerConfigs(KafkaProperties kafkaProperties) {
         Map<String, Object> consumerProperties = kafkaProperties.buildConsumerProperties();
-        String typeMappings = KafkaUtils.buildTypeMappings(RideInfoMessage.class, DriverStatusMessage.class);
+        String typeMappings = KafkaUtils.buildTypeMappings(
+                RideInfoMessage.class,
+                DriverStatusMessage.class
+        );
 
+        consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroup);
         consumerProperties.put(JsonDeserializer.TYPE_MAPPINGS, typeMappings);
 
         return consumerProperties;

@@ -32,34 +32,34 @@ public class CarController {
 
     private final CarService carService;
 
-    @PostMapping("/drivers/{driverExternalId}/cars")
-    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(DRIVERS_DRIVER_EXTERNAL_ID_CARS_ENDPOINT)
+    @ResponseStatus(HttpStatus.CREATED)
     public CarResponse createCar(@PathVariable UUID driverExternalId,
                                  @RequestBody @Valid CarRequest carRequest) {
         return carService.createCar(driverExternalId, carRequest);
     }
 
-    @GetMapping("/cars/{externalId}")
+    @GetMapping(CARS_CARD_EXTERNAL_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
-    public CarResponse findCarByExternalId(@PathVariable UUID externalId) {
-        return carService.findByExternalId(externalId);
+    public CarResponse findCarByExternalId(@PathVariable UUID cardExternalId) {
+        return carService.findByExternalId(cardExternalId);
     }
 
-    @GetMapping("/cars")
+    @GetMapping(CARS_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
     public AllCarsResponse findAllCars(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return carService.findAllCars(pageable);
     }
 
-    @PutMapping("/drivers/{driverExternalId}/cars")
+    @PutMapping(DRIVERS_DRIVER_EXTERNAL_ID_CARS_ENDPOINT)
     @ResponseStatus(HttpStatus.OK)
     public CarResponse updateDriverCar(@PathVariable UUID driverExternalId,
                                        @RequestBody @Valid UpdateCarRequest updateCarRequest) {
         return carService.updateDriverCar(driverExternalId, updateCarRequest);
     }
 
-    @DeleteMapping("/drivers/{driverExternalId}/cars/{carExternalId}")
+    @DeleteMapping(DRIVERS_DRIVER_EXTERNAL_ID_CARS_CAR_EXTERNAL_ID_ENDPOINT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteDriverCar(@PathVariable UUID driverExternalId,
                                 @PathVariable UUID carExternalId) {

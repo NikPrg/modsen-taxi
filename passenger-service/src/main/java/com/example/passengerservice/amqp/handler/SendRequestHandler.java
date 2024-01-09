@@ -5,7 +5,7 @@ import com.example.passengerservice.amqp.message.NewPassengerInfoMessage;
 import com.example.passengerservice.amqp.message.RemovePassengerInfoMessage;
 
 public interface SendRequestHandler {
-    void sendCardUsedAsDefaultChangeRequestToKafka(ChangeCardUsedAsDefaultMessage message);
+    void sendDefaultCardChangeRequest(ChangeCardUsedAsDefaultMessage message);
 
     void sendNewPassengerToKafka(NewPassengerInfoMessage message);
 

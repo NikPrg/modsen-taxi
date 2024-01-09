@@ -28,6 +28,9 @@ public class KafkaProducerConfig {
     private static final String DRIVER_STATUS_KAFKA_CHANNEL = "driverStatusKafkaChannel";
     private static final String RIDE_PAYMENT_KAFKA_CHANNEL = "ridePaymentKafkaChannel";
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String bootstrapServers;
+
     @Value("${app.kafka.topic.ride-info-events}")
     private String rideInfoEventsTopic;
 
@@ -95,6 +98,7 @@ public class KafkaProducerConfig {
                 DriverStatusMessage.class
         );
 
+        producerProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         producerProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         producerProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         producerProperties.put(JsonSerializer.TYPE_MAPPINGS, typeMappings);

@@ -38,15 +38,11 @@ import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(MockitoExtension.class)
 public class PassengerServiceImplTest {
-
     private final ProjectionFactory projectionFactory = new SpelAwareProxyProjectionFactory();
-
     @Mock
     private PassengerMapper passengerMapper;
-
     @Mock
     private PassengerRepository passengerRepository;
-
     @Mock
     private SendRequestHandler sendRequestHandler;
 
