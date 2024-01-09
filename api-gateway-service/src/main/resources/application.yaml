@@ -1,0 +1,54 @@
+server:
+  port: 7777
+
+spring:
+  application:
+    name: api-gateway-service
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: card-service
+          uri: lb://CARD-SERVICE
+          predicates:
+            - Path=/public/api/v1/passengers/*/cards/**
+
+        - id: driver-service
+          uri: lb://DRIVER-SERVICE
+          predicates:
+            - Path=/public/api/v1/drivers/**, /public/api/v1/cars/**
+
+        - id: passenger-service
+          uri: lb://PASSENGER-SERVICE
+          predicates:
+            - Path=/public/api/v1/passengers/**
+
+        - id: rides-service
+          uri: lb://RIDES-SERVICE
+          predicates:
+            - Path=/public/api/v1/rides/**
+      default-filters:
+        - name: SaveSession
+
+  data:
+    redis:
+      connect-timeout: 2s
+      host: redis
+      port: 6379
+      timeout: 1s
+
+  session:
+    timeout: 10m
+    redis:
+      namespace: api-gateway:session
+      repository-type: indexed
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eurekaservice:8761/eureka/

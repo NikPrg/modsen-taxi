@@ -91,6 +91,14 @@ services:
       - kafka
     command: "/opt/bitnami/kafka-init-topics.sh"
 
+  redis:
+    image: redis:7.2-rc-alpine
+    container_name: redis
+    networks:
+      - develop
+    ports:
+      - "6379:6379"
+
   eurekaservice:
     container_name: eureka-service-modsen
     build:
@@ -102,6 +110,22 @@ services:
       develop:
         aliases:
           - "eurekaservice"
+
+  api-gateway-service:
+    build:
+      context: api-gateway-service
+      dockerfile: Dockerfile
+    container_name: api-gateway-service
+    depends_on:
+      - redis
+    networks:
+      - develop
+    ports:
+      - 7777:7777
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eurekaservice:8761/eureka/
+      - SPRING_DATA_REDIS_HOST=redis:8761
+
 
   card-service:
     build:
