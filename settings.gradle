@@ -1,4 +1,3 @@
 rootProject.name = 'modsen-taxi'
 
 include 'passenger-service'
-include 'driver-service'

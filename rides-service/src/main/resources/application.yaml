@@ -29,6 +29,13 @@ spring:
       group-id: rides-service-group
       auto-offset-reset: earliest
 
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 app:
   config:
     base-cost-per-km: 1
@@ -46,11 +53,9 @@ app:
       clients:
         passenger:
           name: passenger-service
-          base-url: localhost:8080
           routes:
             get-payment-method: /public/api/v1/passengers/{externalId}/paymentMethod
         card:
           name: card-service
-          base-url: localhost:8083
           routes:
             get-default-card: /public/api/v1/passengers/{passengerExternalId}/cards/default

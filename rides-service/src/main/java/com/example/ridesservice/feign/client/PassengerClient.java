@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
-@FeignClient(name = "${app.api.feign.clients.passenger.name}", url = "${app.api.feign.clients.passenger.base-url}")
+@FeignClient(name = "${app.api.feign.clients.passenger.name}")
 public interface PassengerClient {
-
     @GetMapping("${app.api.feign.clients.passenger.routes.get-payment-method}")
     PaymentMethodResponse findPassengerPaymentMethod(@PathVariable UUID externalId);
 }

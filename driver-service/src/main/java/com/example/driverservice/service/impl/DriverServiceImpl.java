@@ -36,7 +36,7 @@ public class DriverServiceImpl implements DriverService {
     private final DriverRepository driverRepo;
     private final DriverMapper driverMapper;
     private final SendRequestHandler sendRequestHandler;
-    private final WebClient webClient;
+    private final WebClient.Builder webClient;
     private final DataComposerUtils dataComposerUtils;
 
     @Value("${app.routes.rides.accept-ride-method}")
@@ -122,7 +122,7 @@ public class DriverServiceImpl implements DriverService {
         UUID rideExternalId = rideInfoMessage.externalId();
         UUID driverExternalId = driver.getExternalId();
 
-        webClient.put()
+        webClient.build().put()
                 .uri(ridesAcceptRideMethodUri, rideExternalId, driverExternalId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()

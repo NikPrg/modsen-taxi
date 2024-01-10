@@ -32,6 +32,13 @@ spring:
   messages:
     basename: messages-constants
 
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 app:
   api:
     web-client:
@@ -45,4 +52,4 @@ app:
 
   routes:
     rides:
-      accept-ride-method: http://localhost:8082/public/api/v1/rides/{rideExternalId}/drivers/{driverExternalId}/accept
+      accept-ride-method: http://RIDES-SERVICE/public/api/v1/rides/{rideExternalId}/drivers/{driverExternalId}/accept
