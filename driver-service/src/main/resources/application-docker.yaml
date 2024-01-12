@@ -1,0 +1,55 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: driver-service
+
+  liquibase:
+    change-log: db/changelog/main-changelog.xml
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/taxi-drivers
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        generate_statistics: false
+        format_sql: false
+        show_sql: false
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: driver-service-group
+      auto-offset-reset: earliest
+
+  messages:
+    basename: messages-constants
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eurekaservice:8761/eureka/
+
+app:
+  api:
+    web-client:
+      connection-timeout-in-ms: 1000
+
+  kafka:
+    topic:
+      driver-info-events: driver-info-events
+      ride-info-events: ride-info-events
+      driver-status-events: driver-status-events
+
+  routes:
+    rides:
+      accept-ride-method: http://RIDES-SERVICE/public/api/v1/rides/{rideExternalId}/drivers/{driverExternalId}/accept
